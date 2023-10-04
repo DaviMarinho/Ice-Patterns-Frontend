@@ -1,0 +1,44 @@
+.button {
+  background-color: transparent;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.content {
+  background-color: #111827;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.top {
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90vw;
+  position: fixed; /* Adicionado para fixar o elemento */
+  top: 0; /* Garante que o elemento fique no topo da página */
+  background-color: #111827; /* Defina uma cor de fundo, se necessário */
+  padding: 10px; /* Adicione o espaçamento desejado */
+  z-index: 999; /* Defina a ordem de sobreposição para garantir que ele esteja sempre no topo */
+}
+
+.logo {
+  color: #fff;
+  font-family: Roboto;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.line {
+  background-color: white !important;
+}
