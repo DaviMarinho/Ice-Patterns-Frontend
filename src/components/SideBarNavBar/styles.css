@@ -1,0 +1,112 @@
+/* styles.css */
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 250px;
+  background-color: #111827; /* Substitua pela cor desejada */
+  color: white;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebarContentUpper {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
+  align-items: flex-start;
+  margin-left: 3.5rem;
+}
+
+.sidebarContentLower {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 15%;
+    align-items: flex-start;
+    margin-left: 3.5rem;
+  }
+
+.logoSidebar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 4rem;
+}
+
+.sidebarLink {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  margin-bottom: 1.5rem;
+}
+
+.iconsSidebar {
+  margin-right: 1rem;
+  display: flex;
+  justify-content: start;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 250px;
+  height: 100px;
+  background-color: #fff;
+  color: black;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.divisaoNavbar {
+  position: fixed;
+  top: 100px; /* Altura da sua navbar */
+  left: 250px; /* Largura da sua sidebar */
+  height: 1px; /* Altura da linha azul */
+  width: calc(100% - 250px); /* Largura da tela menos a largura da sidebar */
+  background-color: #4a8db7; /* Cor da linha azul */
+}
+
+.progressBarContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 20px;
+  margin-left: 50px;
+  flex-direction: column;
+}
+
+.progressBarTexts {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  width: 300px;
+}
+
+.progressBar {
+  height: 32px;
+  width: 300px;
+  background-color: #a1e1fa;
+  border-radius: 10px;
+}
+
+.icons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  width: 600px;
+}

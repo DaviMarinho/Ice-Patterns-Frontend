@@ -1,44 +1,83 @@
-.button {
-  background-color: transparent;
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
 }
 
-.content {
-  background-color: #111827;
+.iceberg-niveis {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
   height: 100vh;
+  position: relative;
+  z-index: 999;
+  margin-top: 50px;
+}
+
+.iceberg-full {
+  position: absolute;
+  z-index: 999;
+}
+
+.niveis {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin: 0 20px;
+  height: 65vh;
+  width: 70%;
+}
+
+.linha {
+  width: 50%; /* A linha se estende por toda a largura do container */
+  height: 2px; /* Altura da linha azul */
+  background-color: #4a8db7; /* Cor da linha azul */
+  top: 50%; /* Ajuste a posição vertical da linha para o centro do elemento pai */
+  transform: translateY(-50%); /* Centralize a linha verticalmente */
+}
+
+.conjunto-nivel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.textLock {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.textNivel {
+  margin-right: 10px;
+}
+
+.button-container {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  margin-bottom: 40px;
 }
 
-.top {
-  color: white;
+.button-nivel {
+  cursor: pointer;
   display: flex;
-  justify-content: space-between;
+  width: 200px;
+  height: 50px;
+  padding: 8px;
+  justify-content: center;
   align-items: center;
-  width: 90vw;
-  position: fixed; /* Adicionado para fixar o elemento */
-  top: 0; /* Garante que o elemento fique no topo da página */
-  background-color: #111827; /* Defina uma cor de fundo, se necessário */
-  padding: 10px; /* Adicione o espaçamento desejado */
-  z-index: 999; /* Defina a ordem de sobreposição para garantir que ele esteja sempre no topo */
-}
-
-.logo {
-  color: #fff;
-  font-family: Roboto;
-  font-size: 24px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-}
-
-.line {
-  background-color: white !important;
+  gap: 8px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  background: #111827;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  color: white;
 }

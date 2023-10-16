@@ -12,6 +12,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import "./styles.css";
+import { useNavigate } from 'react-router-dom';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -19,6 +20,12 @@ interface LoginModalProps {
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
+  const navigate = useNavigate()
+
+  const handleLogin = () => {
+    navigate('/home')
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -33,7 +40,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
           <Input type="password" placeholder="Digite sua senha" mb={4} />
         </ModalBody>
         <ModalFooter className="center">
-          <Button className="button">Entrar</Button>
+          <Button className="button" onClick={handleLogin}>
+            Entrar
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

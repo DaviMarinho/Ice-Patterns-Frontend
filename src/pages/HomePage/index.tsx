@@ -1,60 +1,81 @@
-import {
-  Button,
-  ChakraProvider,
-  useDisclosure,
-  Text,
-  Image,
-  Box,
-  Divider,
-  Center,
-} from "@chakra-ui/react";
-import React from "react";
-import LoginModal from "../../components/LoginModal";
-import RegisterModal from "../../components/RegisterModal";
+import * as React from "react";
 import "./styles.css";
-import icebergLogo from "../../assets/iceberg-logo.png";
+import SidebarNavbar from "../../components/SideBarNavBar";
+import { Box, Image, Text, Button } from "@chakra-ui/react";
+import icebergFull from "../../assets/iceberg-full.png";
+import cadeado from "../../assets/cadeado.png";
 
 const HomePage: React.FC = () => {
-  const {
-    isOpen: isLoginOpen,
-    onOpen: onLoginOpen,
-    onClose: onLoginClose,
-  } = useDisclosure();
-  const {
-    isOpen: isRegisterOpen,
-    onOpen: onRegisterOpen,
-    onClose: onRegisterClose,
-  } = useDisclosure();
-
   return (
-    <ChakraProvider>
-      <Box className="content">
-        <Box className="top">
-          <Box className="logo">
-            <Text>IcePatterns</Text>
-            <Image src={icebergLogo} alt="iceberg" />
-          </Box>
+    <>
+      <SidebarNavbar />
+      <Box className="container">
+        <Box className="iceberg-niveis">
+          <Image className="iceberg-full" src={icebergFull} />
+          <Box className="niveis">
+            <Box className="conjunto-nivel">
+              <Box className="textLock">
+                <Text className="textNivel">Nível 1</Text>
+                <Image src={cadeado} />
+              </Box>
+              <div className="linha"></div>
+            </Box>
 
-          <Box className="button">
-            <Button mr={4} onClick={onLoginOpen}>
-              Entrar
-            </Button>
-            <Button onClick={onRegisterOpen}>Registrar-se</Button>
+            <Box className="conjunto-nivel">
+              <Box className="textLock">
+                <Text className="textNivel">Nível 2</Text>
+                <Image src={cadeado} />
+              </Box>
+              <div className="linha"></div>
+            </Box>
+
+            <Box className="conjunto-nivel">
+              <Box className="textLock">
+                <Text className="textNivel">Nível 3</Text>
+                <Image src={cadeado} />
+              </Box>
+              <div className="linha"></div>
+            </Box>
+
+            <Box className="conjunto-nivel">
+              <Box className="textLock">
+                <Text className="textNivel">Nível 4</Text>
+                <Image src={cadeado} />
+              </Box>
+              <div className="linha"></div>
+            </Box>
+
+            <Box className="conjunto-nivel">
+              <Box className="textLock">
+                <Text className="textNivel">Nível 5</Text>
+                <Image src={cadeado} />
+              </Box>
+              <div className="linha"></div>
+            </Box>
+
+            <Box className="conjunto-nivel">
+              <Box className="textLock">
+                <Text className="textNivel">Nível 6</Text>
+                <Image src={cadeado} />
+              </Box>
+              <div className="linha"></div>
+            </Box>
+
+            <Box className="conjunto-nivel">
+              <Box className="textLock">
+                <Text className="textNivel">Nível 7</Text>
+                <Image src={cadeado} />
+              </Box>
+              <div className="linha"></div>
+            </Box>
           </Box>
         </Box>
 
-        <Divider
-          orientation="horizontal"
-          my={4}
-          bg="white"
-          borderWidth="1px"
-          w="85%"
-        />
+        <div className="button-container">
+          <button className="button-nivel">Próxima Missão</button>
+        </div>
       </Box>
-
-      <LoginModal isOpen={isLoginOpen} onClose={onLoginClose} />
-      <RegisterModal isOpen={isRegisterOpen} onClose={onRegisterClose} />
-    </ChakraProvider>
+    </>
   );
 };
 
