@@ -28,15 +28,15 @@ const SidebarNavbar = () => {
         </Box>
 
         <Box className="sidebarContentUpper">
-          <Link className="sidebarLink" to="/inicio">
+          <Link className="sidebarLink" to="/home">
             <Image className="iconsSidebar" src={homeIcon} />
             <Text fontSize="lg">Início</Text>
           </Link>
-          <Link className="sidebarLink" to="/missoes">
+          <Link className="sidebarLink" to="/quests">
             <Image className="iconsSidebar" src={questIcon} />
             <Text fontSize="lg">Missões</Text>
           </Link>
-          <Link className="sidebarLink" to="/loja">
+          <Link className="sidebarLink" to="/shop">
             <Image className="iconsSidebar" src={storeIcon} />
             <Text fontSize="lg">Loja</Text>
           </Link>
@@ -46,7 +46,7 @@ const SidebarNavbar = () => {
             <Image className="iconsSidebar" src={userIcon} />
             <Text fontSize="lg">Perfil</Text>
           </Link>
-          <Link className="sidebarLink" to="/sair">
+          <Link className="sidebarLink" to="/">
             <Image className="iconsSidebar" src={logoutIcon} />
             <Text fontSize="lg">Sair</Text>
           </Link>
