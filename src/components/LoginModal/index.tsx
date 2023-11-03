@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Modal,
   ModalOverlay,
@@ -12,7 +11,9 @@ import {
   Text,
 } from "@chakra-ui/react";
 import "./styles.css";
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
+import axios from "axios";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -20,10 +21,33 @@ interface LoginModalProps {
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
-  const navigate = useNavigate()
+  const { dispatch } = useAuth();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
-  const handleLogin = () => {
-    navigate('/home')
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:4001/icepatterns/login",
+        formData
+      );
+      dispatch({
+        type: "LOGIN",
+        payload: {
+          user: response.data.user,
+          token: response.data.token,
+        },
+      });
+      console.log('sucesso');
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -34,10 +58,24 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
         <ModalCloseButton />
         <ModalBody>
           <Text>Usuário:</Text>
-          <Input placeholder="Digite seu usuário" mb={4} />
+          <Input
+            type="text"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Digite seu usuário"
+            mb={4}
+          />
 
           <Text>Senha:</Text>
-          <Input type="password" placeholder="Digite sua senha" mb={4} />
+          <Input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Digite sua senha"
+            mb={4}
+          />
         </ModalBody>
         <ModalFooter className="center">
           <Button className="button" onClick={handleLogin}>

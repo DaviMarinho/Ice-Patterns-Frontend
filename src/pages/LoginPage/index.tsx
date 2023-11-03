@@ -1,11 +1,31 @@
 import React, { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import axios from 'axios';
 
 const LoginPage: React.FC = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const { dispatch } = useAuth();
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
 
-  const handleLogin = () => {
-    // Aqui você pode adicionar a lógica de autenticação
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post('http://localhost:4001/icepatterns/login', formData);
+      dispatch({
+        type: 'LOGIN',
+        payload: {
+          user: response.data.user,
+          token: response.data.token,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -13,15 +33,15 @@ const LoginPage: React.FC = () => {
       <h1>Login</h1>
       <input
         type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
+        name="email"
+        value={formData.email}
+        onChange={handleChange}
       />
       <input
         type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        name="password"
+        value={formData.password}
+        onChange={handleChange}
       />
       <button onClick={handleLogin}>Login</button>
     </div>

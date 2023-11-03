@@ -1,11 +1,34 @@
 import React, { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import axios from 'axios';
 
 const RegisterPage: React.FC = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const { dispatch } = useAuth();
+  const [formData, setFormData] = useState({
+    username: '',
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
 
-  const handleRegister = () => {
-    // Aqui você pode adicionar a lógica de registro
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleRegister = async () => {
+    try {
+      const response = await axios.post('http://localhost:4001/create-user', formData);
+      dispatch({
+        type: 'LOGIN',
+        payload: {
+          user: response.data.user,
+          token: response.data.token,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -13,15 +36,33 @@ const RegisterPage: React.FC = () => {
       <h1>Register</h1>
       <input
         type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
+        name="username"
+        value={formData.username}
+        onChange={handleChange}
+      />
+      <input
+        type="text"
+        name="name"
+        value={formData.name}
+        onChange={handleChange}
+      />
+      <input
+        type="text"
+        name="email"
+        value={formData.email}
+        onChange={handleChange}
       />
       <input
         type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        name="password"
+        value={formData.password}
+        onChange={handleChange}
+      />
+      <input
+        type="password"
+        name="confirmPassword"
+        value={formData.confirmPassword}
+        onChange={handleChange}
       />
       <button onClick={handleRegister}>Register</button>
     </div>
