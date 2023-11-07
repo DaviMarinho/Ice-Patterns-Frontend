@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useReducer, Dispatch, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, Dispatch, ReactNode, useEffect, useCallback } from 'react';
+import jwt from 'jsonwebtoken';
 
 interface User {
   username: string;
@@ -24,15 +25,21 @@ const initialState: AuthState = {
 const AuthContext = createContext<{
   state: AuthState;
   dispatch: Dispatch<AuthAction>;
+  verifyExpiredToken: () => void;
+  isAuthenticated: boolean;
 }>({
   state: initialState,
   dispatch: () => {},
+  verifyExpiredToken: () => {},
+  isAuthenticated: false,
 });
 
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {
   switch (action.type) {
     case 'LOGIN':
-      localStorage.setItem('token', action.payload?.token || '');
+      if (action.payload) {
+        localStorage.setItem('token', action.payload.token || '');
+      }
       return {
         ...state,
         user: action.payload?.user || null,
@@ -51,14 +58,43 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
 };
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [state, dispatch] = useReducer(authReducer, initialState);
-  
-    return (
-      <AuthContext.Provider value={{ state, dispatch }}>
-        {children}
-      </AuthContext.Provider>
-    );
-  };
+  const [state, dispatch] = useReducer(authReducer, initialState);
+
+  const verifyExpiredToken = useCallback(() => {
+    const { token } = state;
+
+    if (token) {
+      try {
+        const decodedToken = jwt.decode(token);
+
+        if (decodedToken && typeof decodedToken === 'object') {
+          const { exp } = decodedToken;
+          const currentTime = Date.now() / 1000;
+
+          if (exp && exp < currentTime) {
+            // Token expirado, faça logout
+            dispatch({ type: 'LOGOUT' });
+          }
+        }
+      } catch (error) {
+        // Token inválido, faça logout
+        dispatch({ type: 'LOGOUT' });
+      }
+    }
+  }, [state, dispatch]);
+
+  const isAuthenticated = !!state.token;
+
+  useEffect(() => {
+    verifyExpiredToken();
+  }, [verifyExpiredToken]);
+
+  return (
+    <AuthContext.Provider value={{ state, dispatch, verifyExpiredToken, isAuthenticated }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
 
 export const useAuth = () => {
   return useContext(AuthContext);
