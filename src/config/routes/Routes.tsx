@@ -19,7 +19,7 @@ export function Router() {
         }
       />
       <Route
-        path="/movements"
+        path="/perfil"
         element={
           <RequireAuth>
             <PerfilPage />
@@ -27,7 +27,7 @@ export function Router() {
         }
       />
       <Route
-        path="/equipments"
+        path="/quests"
         element={
           <RequireAuth>
             <QuestsPage />
@@ -35,7 +35,7 @@ export function Router() {
         }
       />
       <Route
-        path="/users"
+        path="/shop"
         element={
           <RequireAuth>
             <ShopPage />

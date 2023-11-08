@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Importe useHistory do React Router
 import {
   Modal,
   ModalOverlay,
@@ -11,9 +13,9 @@ import {
   Text,
 } from "@chakra-ui/react";
 import "./styles.css";
-import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import axios from "axios";
+import { api } from "../../config/axios/index";
+import Message from "../Message"; // Importe o componente de mensagem
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -22,10 +24,14 @@ interface LoginModalProps {
 
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const { dispatch } = useAuth();
+  const navigate = useNavigate(); // Obtenha o objeto de histórico do React Router
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -33,10 +39,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost:4001/icepatterns/login",
-        formData
-      );
+      const response = await api.post("login", formData);
       dispatch({
         type: "LOGIN",
         payload: {
@@ -44,8 +47,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
           token: response.data.token,
         },
       });
-      console.log('sucesso');
+      setSuccessMessage("Login bem-sucedido!"); // Define a mensagem de sucesso
+      setErrorMessage(""); // Limpa a mensagem de erro
+      navigate("/HomePage"); // Redireciona para a página "/HomePage"
     } catch (error) {
+      setSuccessMessage(""); // Limpa a mensagem de sucesso
+      setErrorMessage("Erro ao fazer login. Verifique suas credenciais."); // Define a mensagem de erro
       console.error(error);
     }
   };
@@ -57,6 +64,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
         <ModalHeader className="center">Login</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
+          {successMessage && <Message message={successMessage} isSuccess />}
+          {errorMessage && <Message message={errorMessage} isSuccess={false} />}
+
           <Text>Usuário:</Text>
           <Input
             type="text"

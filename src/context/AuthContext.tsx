@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useReducer, Dispatch, ReactNode, useEffect, useCallback } from 'react';
-import jwt from 'jsonwebtoken';
 
 interface User {
   username: string;
@@ -65,7 +64,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     if (token) {
       try {
-        const decodedToken = jwt.decode(token);
+        const decodedToken = (token: string): any => {
+          try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const decodedToken = JSON.parse(window.atob(base64));
+            return decodedToken;
+          } catch (error) {
+            return null; // Token inválido ou erro ao decodificar
+          }
+        };
 
         if (decodedToken && typeof decodedToken === 'object') {
           const { exp } = decodedToken;

@@ -1,25 +1,18 @@
-import * as React from 'react';
-import { BrowserRouter, Routes, Route} from 'react-router-dom';
-import ExternalPage from './pages/ExternalPage';
-import HomePage from './pages/HomePage';
-import ShopPage from './pages/ShopPage';
-import PerfilPage from './pages/PerfilPage';
-import QuestsPage from './pages/QuestsPage';
-import { ChakraProvider } from '@chakra-ui/react'
+import * as React from "react";
+import { BrowserRouter } from "react-router-dom";
+import { Router } from "./config/routes/Routes";
+import { AuthProvider } from './context/AuthContext';
+import { ChakraProvider } from "@chakra-ui/react";
 
 const App: React.FC = () => {
   return (
-    <ChakraProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<ExternalPage />}/>
-          <Route path="/home" element={<HomePage />}/>
-          <Route path="/shop" element={<ShopPage />}/>
-          <Route path="/perfil" element={<PerfilPage />}/>
-          <Route path="/quests" element={<QuestsPage />}/>
-        </Routes>
-      </BrowserRouter>
-    </ChakraProvider>
+    <BrowserRouter>
+      <ChakraProvider>
+        <AuthProvider>
+          <Router />
+        </AuthProvider>
+      </ChakraProvider>
+    </BrowserRouter>
   );
 };
 
