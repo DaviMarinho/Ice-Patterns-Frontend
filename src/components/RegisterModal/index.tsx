@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { api } from "../../config/axios/index";
+import api from "../../config/axios/index";
 import {
   Modal,
   ModalOverlay,
@@ -14,6 +14,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import "./styles.css";
+import { toast } from '../../utils/toast';
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -21,7 +22,7 @@ interface RegisterModalProps {
 }
 
 const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose }) => {
-  const { dispatch } = useAuth();
+  const { signIn } = useAuth();
   const [formData, setFormData] = useState({
     username: "",
     name: "",
@@ -30,25 +31,32 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose }) => {
     confirmPassword: "",
   });
 
-  const [successMessage, setSuccessMessage] = useState(false);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleRegister = async () => {
+    const { username, name, email, password, confirmPassword } = formData;
+
+    if (password !== confirmPassword) {
+      // Trate o caso em que as senhas não coincidem
+      toast.error("As senhas não coincidem");
+      return;
+    }
+
     try {
-      const response = await api.post("create-user", formData);
-      dispatch({
-        type: "LOGIN",
-        payload: {
-          user: response.data.user,
-          token: response.data.token,
-        },
+      const response = await api.post("create-user", {
+        username,
+        name,
+        email,
+        password,
+        confirmPassword
       });
-      setSuccessMessage(true); // Exibe a mensagem de sucesso
+      toast.success("Registro bem-sucedido.");
+      onClose();
     } catch (error) {
-      console.error(error);
+      toast.error("Erro ao registrar o usuário.");
     }
   };
 
@@ -59,72 +67,60 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose }) => {
         <ModalHeader className="center">Registro</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          {successMessage ? ( // Renderiza a mensagem de sucesso se for verdadeira
-            <Text>Sucesso! Usuário criado com êxito.</Text>
-          ) : (
-            <>
-              <Text>Usuário:</Text>
-              <Input
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                placeholder="Digite seu usuário"
-                mb={4}
-              />
+          <Text>Usuário:</Text>
+          <Input
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            placeholder="Digite seu usuário"
+            mb={4}
+          />
 
-              <Text>Nome:</Text>
-              <Input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Digite seu nome"
-                mb={4}
-              ></Input>
+          <Text>Nome:</Text>
+          <Input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="Digite seu nome"
+            mb={4}
+          />
 
-              <Text>Email:</Text>
-              <Input
-                type="text"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Email@email.com"
-                mb={4}
-              />
+          <Text>Email:</Text>
+          <Input
+            type="text"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Email@email.com"
+            mb={4}
+          />
 
-              <Text>Senha:</Text>
-              <Input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Digite sua senha"
-                mb={4}
-              />
+          <Text>Senha:</Text>
+          <Input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Digite sua senha"
+            mb={4}
+          />
 
-              <Text>Senha:</Text>
-              <Input
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                placeholder="Digite sua senha"
-                mb={4}
-              />
-            </>
-          )}
+          <Text>Confirmar Senha:</Text>
+          <Input
+            type="password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            placeholder="Digite sua senha novamente"
+            mb={4}
+          />
         </ModalBody>
         <ModalFooter className="center">
-          {successMessage ? ( // Renderiza o botão de fechar se a mensagem de sucesso for verdadeira
-            <Button onClick={onClose} className="button">
-              Fechar
-            </Button>
-          ) : (
-            <Button onClick={handleRegister} className="button">
-              Registrar
-            </Button>
-          )}
+          <Button onClick={handleRegister} className="button">
+            Registrar
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

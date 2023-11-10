@@ -6,8 +6,29 @@ import perfil from "../../assets/circle-user-perfil.png";
 import icicles from "../../assets/icicles-perfil.png";
 import scroll from "../../assets/scroll-perfil.png";
 import hearth from "../../assets/heart-perfil.png";
+import { useAuth } from "../../context/AuthContext";
+import { AxiosResponse } from "axios";
+import  api from '../../config/axios';
+import { useEffect, useState } from "react";
 
 const PerfilPage: React.FC = () => {
+  const { user } = useAuth();
+
+  const [achievements, setAchievements] = useState([]);
+
+  useEffect(() => {
+    const fetchAchievements = async () => {
+      try {
+        const { data }: AxiosResponse<any[]> = await api.get('getUserAchievements');
+        console.log(data);
+      } catch (error) {
+        console.error("Erro ao buscar achievements:", error);
+      }
+    };
+
+    fetchAchievements();
+  }, []);
+
   return (
     <>
       <SidebarNavbar />
@@ -15,14 +36,11 @@ const PerfilPage: React.FC = () => {
         <Box className="person-info">
           <Box className="">
             <Text className="title-perfil">Nome</Text>
-            <Text className="info-perfil">Pinguim da Silva</Text>
-            <Text className="title-perfil">Profissão</Text>
-            <Text className="info-perfil">Estudante</Text>
-            <Text className="title-perfil">Sobre mim</Text>
-            <Text className="info-perfil">
-              Eu sou estudante do polo norte e quero aprender mais sobre padrões
-              de projeto.
-            </Text>
+            <Text className="info-perfil">{user?.name}</Text>
+            <Text className="title-perfil">Username</Text>
+            <Text className="info-perfil">{user?.username}</Text>
+            <Text className="title-perfil">Email</Text>
+            <Text className="info-perfil">{user?.email}</Text>
           </Box>
           <Image src={perfil}></Image>
         </Box>
@@ -34,28 +52,14 @@ const PerfilPage: React.FC = () => {
             <Text>Ver Todos</Text>
           </Box>
 
-          <Box className="item-perfil">
-            <Image src={icicles}></Image>
-            <Box className="texts-shop">
-              <Text className="text-item">
-                Você completou seu primeiro nível do iceberg!
-              </Text>
+          {achievements.map((achievement: any, index: any) => (
+            <Box key={index} className="item-perfil">
+              <Image src={achievement.imageSrc}></Image>
+              <Box className="texts-shop">
+                <Text className="text-item">{achievement.description}</Text>
+              </Box>
             </Box>
-          </Box>
-          <Box className="item-perfil">
-            <Image src={scroll}></Image>
-            <Box className="texts-shop">
-              <Text className="text-item">
-                Você acertou todas as questões na sua primeira prática!
-              </Text>
-            </Box>
-          </Box>
-          <Box className="item-perfil">
-            <Image src={hearth}></Image>
-            <Box className="texts-shop">
-              <Text className="text-item">Você finalizou o iceberg!</Text>
-            </Box>
-          </Box>
+          ))}
         </Box>
       </Box>
     </>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom"; // Importe useHistory do React Router
 import {
   Modal,
@@ -11,11 +12,11 @@ import {
   Button,
   Input,
   Text,
+  Box,
 } from "@chakra-ui/react";
 import "./styles.css";
 import { useAuth } from "../../context/AuthContext";
-import { api } from "../../config/axios/index";
-import Message from "../Message"; // Importe o componente de mensagem
+import { CredentialUser } from "../../types/users.d";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -23,38 +24,21 @@ interface LoginModalProps {
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
-  const { dispatch } = useAuth();
-  const navigate = useNavigate(); // Obtenha o objeto de histórico do React Router
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const { signIn } = useAuth();
 
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<CredentialUser>();
 
-  const handleLogin = async () => {
-    try {
-      const response = await api.post("login", formData);
-      dispatch({
-        type: "LOGIN",
-        payload: {
-          user: response.data.user,
-          token: response.data.token,
-        },
-      });
-      setSuccessMessage("Login bem-sucedido!"); // Define a mensagem de sucesso
-      setErrorMessage(""); // Limpa a mensagem de erro
-      navigate("/HomePage"); // Redireciona para a página "/HomePage"
-    } catch (error) {
-      setSuccessMessage(""); // Limpa a mensagem de sucesso
-      setErrorMessage("Erro ao fazer login. Verifique suas credenciais."); // Define a mensagem de erro
-      console.error(error);
-    }
+  const onSubmit: SubmitHandler<CredentialUser> = async ({
+    identifier,
+    password,
+  }) => {
+    await signIn({ identifier, password });
   };
 
   return (
@@ -63,35 +47,40 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
       <ModalContent>
         <ModalHeader className="center">Login</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>
-          {successMessage && <Message message={successMessage} isSuccess />}
-          {errorMessage && <Message message={errorMessage} isSuccess={false} />}
+        <form onSubmit={handleSubmit(onSubmit)} aria-label="form">
+          <ModalBody>
+            <Box mb="7%">
+              <Text>Email</Text>
+              <Input
+                type="text"
+                {...register("identifier", { required: true })}
+                placeholder="Digite seu usuário"
+              />
+              {errors.identifier && (
+                <span>
+                  <Text color="red.400">Este campo é obrigatório</Text>
+                </span>
+              )}
+            </Box>
 
-          <Text>Usuário:</Text>
-          <Input
-            type="text"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Digite seu usuário"
-            mb={4}
-          />
-
-          <Text>Senha:</Text>
-          <Input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Digite sua senha"
-            mb={4}
-          />
-        </ModalBody>
-        <ModalFooter className="center">
-          <Button className="button" onClick={handleLogin}>
-            Entrar
-          </Button>
-        </ModalFooter>
+            <Box mb="4%">
+              <Text>Senha</Text>
+              <Input
+                type="password"
+                {...register("password", { required: true })}
+                placeholder="Digite sua senha"
+              />
+              {errors.password && (
+                <span>
+                  <Text color="red.400">Este campo é obrigatório</Text>
+                </span>
+              )}
+            </Box>
+          </ModalBody>
+          <ModalFooter className="center">
+            <Button type="submit" className="button">Entrar</Button>
+          </ModalFooter>
+        </form>
       </ModalContent>
     </Modal>
   );

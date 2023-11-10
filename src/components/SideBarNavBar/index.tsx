@@ -6,7 +6,7 @@ import {
   Progress,
   Image,
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./styles.css";
 import icebergLogo from "../../assets/iceberg-logo-sidebar.png";
 import homeIcon from "../../assets/house-sidebar.png";
@@ -18,17 +18,22 @@ import fireIcon from "../../assets/fire-navbar.png";
 import energiaCheiaIcon from "../../assets/energia-cheia-navbar.png";
 import energiaVaziaIcon from "../../assets/energia-vazia-navbar.png";
 import cuboGeloIcon from "../../assets/cubo-gelo-navbar.png";
+import { useAuth } from "../../context/AuthContext";
 
 const SidebarNavbar = () => {
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
+
+
   return (
     <>
       <Box className="sidebar">
-        <Box className="logoSidebar" as={Link} to="/home">
+        <Link className="logoSidebar" to="/">
           <Image src={icebergLogo} />
-        </Box>
+        </Link>
 
         <Box className="sidebarContentUpper">
-          <Link className="sidebarLink" to="/home">
+          <Link className="sidebarLink" to="/">
             <Image className="iconsSidebar" src={homeIcon} />
             <Text fontSize="lg">Início</Text>
           </Link>
@@ -46,7 +51,7 @@ const SidebarNavbar = () => {
             <Image className="iconsSidebar" src={userIcon} />
             <Text fontSize="lg">Perfil</Text>
           </Link>
-          <Link className="sidebarLink" to="/">
+          <Link className="sidebarLink" to="/" onClick={signOut}>
             <Image className="iconsSidebar" src={logoutIcon} />
             <Text fontSize="lg">Sair</Text>
           </Link>
