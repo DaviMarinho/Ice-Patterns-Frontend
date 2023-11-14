@@ -12,13 +12,13 @@
   justify-content: center;
   height: 100vh;
   position: relative;
-  z-index: 999;
+  z-index: 4;
   margin-top: 50px;
 }
 
 .iceberg-full {
   position: absolute;
-  z-index: 999;
+  z-index: 4;
 }
 
 .niveis {

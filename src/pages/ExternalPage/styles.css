@@ -34,7 +34,7 @@
   top: 0;
   background-color: #111827;
   padding: 10px;
-  z-index: 999;
+  z-index: 4;
 }
 
 .logo {
@@ -102,5 +102,5 @@
   bottom: 0;
   background-color: #111827;
   padding-bottom: 20px;
-  z-index: 999;
+  z-index: 4;
 }

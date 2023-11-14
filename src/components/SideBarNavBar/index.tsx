@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Text,
@@ -19,11 +19,19 @@ import energiaCheiaIcon from "../../assets/energia-cheia-navbar.png";
 import energiaVaziaIcon from "../../assets/energia-vazia-navbar.png";
 import cuboGeloIcon from "../../assets/cubo-gelo-navbar.png";
 import { useAuth } from "../../context/AuthContext";
+import BoosterModal from "../BoosterModal";
+import XpModal from "../ExpModal";
+import EnergiaModal from "../EnergyModal";
+import CuboGeloModal from "../IceCubeModal";
 
 const SidebarNavbar = () => {
   const { signOut } = useAuth();
   const navigate = useNavigate();
 
+  const [isBoosterModalOpen, setIsBoosterModalOpen] = useState(false);
+  const [isXpModalOpen, setIsXpModalOpen] = useState(false);
+  const [isEnergiaModalOpen, setIsEnergiaModalOpen] = useState(false);
+  const [isCuboGeloModalOpen, setIsCuboGeloModalOpen] = useState(false);
 
   return (
     <>
@@ -59,7 +67,7 @@ const SidebarNavbar = () => {
       </Box>
 
       <Box className="navbar">
-        <Box className="progressBarContent">
+        <Box className="progressBarContent" onClick={() => setIsXpModalOpen(true)}>
           <Box className="progressBarTexts">
             <Text fontSize="lg">Nivel 1</Text>
             <Text fontSize="lg">50%</Text>
@@ -68,18 +76,18 @@ const SidebarNavbar = () => {
           <Progress value={50} className="progressBar" />
         </Box>
         <Box className="icons">
-          <HStack spacing="2">
-            <Image src={fireIcon} />
-            <Text fontSize="lg">2</Text>
-          </HStack>
-          <HStack spacing="2">
+        <HStack spacing="2" onClick={() => setIsBoosterModalOpen(true)}>
+        <Image src={fireIcon} onClick={() => setIsBoosterModalOpen(true)}/>
+        <Text fontSize="lg">2</Text>
+      </HStack>
+          <HStack spacing="2" onClick={() => setIsEnergiaModalOpen(true)}>
             <Image src={energiaCheiaIcon} />
             <Image src={energiaCheiaIcon} />
             <Image src={energiaCheiaIcon} />
             <Image src={energiaVaziaIcon} />
             <Image src={energiaVaziaIcon} />
           </HStack>
-          <HStack spacing="2">
+          <HStack spacing="2" onClick={() => setIsCuboGeloModalOpen(true)}>
             <Image src={cuboGeloIcon} />
             <Text fontSize="lg">500</Text>
           </HStack>
@@ -87,6 +95,10 @@ const SidebarNavbar = () => {
       </Box>
 
       <div className="divisaoNavbar"></div>
+      <BoosterModal isOpen={isBoosterModalOpen} onClose={() => setIsBoosterModalOpen(false)} />
+      <XpModal isOpen={isXpModalOpen} onClose={() => setIsXpModalOpen(false)} /*userExp={ Adicione aqui a propriedade de pontos de experiência do usuário }*/ />
+      <EnergiaModal isOpen={isEnergiaModalOpen} onClose={() => setIsEnergiaModalOpen(false)} /*userRecharge={ Adicione aqui a propriedade de recarga de energia do usuário }*/ />
+      <CuboGeloModal isOpen={isCuboGeloModalOpen} onClose={() => setIsCuboGeloModalOpen(false)} />
     </>
   );
 };

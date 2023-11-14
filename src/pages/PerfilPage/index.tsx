@@ -1,33 +1,41 @@
 import * as React from "react";
 import "./styles.css";
 import SidebarNavbar from "../../components/SideBarNavBar";
-import { Box, Image, Text, Button } from "@chakra-ui/react";
+import { Box, Image, Text } from "@chakra-ui/react";
 import perfil from "../../assets/circle-user-perfil.png";
-import icicles from "../../assets/icicles-perfil.png";
-import scroll from "../../assets/scroll-perfil.png";
-import hearth from "../../assets/heart-perfil.png";
+import icicles from "../../assets/iceberg-logo.png";
 import { useAuth } from "../../context/AuthContext";
-import { AxiosResponse } from "axios";
-import  api from '../../config/axios';
+import api from "../../config/axios";
 import { useEffect, useState } from "react";
+interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+}
 
 const PerfilPage: React.FC = () => {
   const { user } = useAuth();
 
-  const [achievements, setAchievements] = useState([]);
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
 
   useEffect(() => {
     const fetchAchievements = async () => {
       try {
-        const { data }: AxiosResponse<any[]> = await api.get('getUserAchievements');
-        console.log(data);
+        const response = await api.get(
+          `getUserAchievements?username=${user?.username}`
+        );
+        const fetchedAchievements: Achievement[] =
+          response.data.achievements.map(
+            (achievement: any) => achievement.achievement
+          );
+        setAchievements(fetchedAchievements);
       } catch (error) {
         console.error("Erro ao buscar achievements:", error);
       }
     };
 
     fetchAchievements();
-  }, []);
+  }, [user?.username]);
 
   return (
     <>
@@ -49,17 +57,18 @@ const PerfilPage: React.FC = () => {
           <div className="divisao-perfil"></div>
           <Box className="texts-achievements">
             <Text>Conquistas</Text>
-            <Text>Ver Todos</Text>
           </Box>
 
-          {achievements.map((achievement: any, index: any) => (
-            <Box key={index} className="item-perfil">
-              <Image src={achievement.imageSrc}></Image>
-              <Box className="texts-shop">
-                <Text className="text-item">{achievement.description}</Text>
+          <Box className="achievements-container">
+            {achievements.map((achievement: Achievement, index: number) => (
+              <Box key={index} className="item-perfil">
+                <Image src={icicles}></Image>
+                <Box className="texts-achievements">
+                  <Text className="text-item">{achievement.description}</Text>
+                </Box>
               </Box>
-            </Box>
-          ))}
+            ))}
+          </Box>
         </Box>
       </Box>
     </>

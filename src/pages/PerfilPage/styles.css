@@ -30,25 +30,46 @@
 }
 
 .achievements-perfil {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.achievements-container {
+  height: 410px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #4a8db7 #d0f2ff;
+}
+
+.achievements-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.achievements-container::-webkit-scrollbar-thumb {
+  background-color: #4a8db7;
+  border-radius: 5px;
+}
+
+.achievements-container::-webkit-scrollbar-track {
+  background-color: #d0f2ff;
 }
 
 .divisao-perfil {
-    height: 4px; /* Altura da linha azul */
-    width: 800px; /* Largura da tela menos a largura da sidebar */
-    background-color: #4a8db7; /* Cor da linha azul */
-    margin: 1rem;
-  }
+  height: 4px;
+  width: 800px;
+  background-color: #4a8db7;
+  margin: 1rem;
+  border-radius: 5px;
+}
 
 .item-perfil {
   width: 600px;
   height: 118px;
   flex-shrink: 0;
   border-radius: 10px;
-  border: 2px solid #214e96;
+  border: 2px solid #4a8db7;
   background: #d0f2ff;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   display: flex;

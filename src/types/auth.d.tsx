@@ -18,6 +18,16 @@ export interface GetUserInfoResponse {
   userId: string;
 }
 
+export interface User {
+  name: string;
+  email: string;
+  expireIn: string;
+  token: string;
+  username: string;
+  id?: string;
+  xpData?: any;
+}
+
 export type AuthResponse = {
   token: string;
   name: string;
