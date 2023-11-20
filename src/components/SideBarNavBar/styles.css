@@ -112,4 +112,5 @@
   align-items: center;
   flex-direction: row;
   width: 600px;
+  cursor: pointer;
 }

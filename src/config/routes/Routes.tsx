@@ -5,11 +5,14 @@ import HomePage from '../../pages/HomePage';
 import PerfilPage from '../../pages/PerfilPage';
 import QuestsPage from '../../pages/QuestsPage';
 import ShopPage from '../../pages/ShopPage';
+import ExercicesPage from '../../pages/ExercisesPage';
+import ResultPage from '../../pages/ResultPage';
+import ContentPage from '../../pages/ContentPage';
+import NivelPage from '../../pages/NivelPage';
 
 export function Router() {
   return (
     <Routes>
-      {/* ROTAS PRIVADAS */}
       <Route
         path="/"
         element={
@@ -39,6 +42,38 @@ export function Router() {
         element={
           <RequireAuth>
             <ShopPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/nivel"
+        element={
+          <RequireAuth>
+            <NivelPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/exercise"
+        element={
+          <RequireAuth>
+            <ExercicesPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/content"
+        element={
+          <RequireAuth>
+            <ContentPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/result"
+        element={
+          <RequireAuth>
+            <ResultPage correctAnswers={0} totalQuestions={0} />
           </RequireAuth>
         }
       />

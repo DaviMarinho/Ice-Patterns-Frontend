@@ -1,11 +1,5 @@
-import React, { useState } from "react";
-import {
-  Box,
-  Text,
-  HStack,
-  Progress,
-  Image,
-} from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import { Box, Text, HStack, Progress, Image } from "@chakra-ui/react";
 import { Link, useNavigate } from "react-router-dom";
 import "./styles.css";
 import icebergLogo from "../../assets/iceberg-logo-sidebar.png";
@@ -23,15 +17,62 @@ import BoosterModal from "../BoosterModal";
 import XpModal from "../ExpModal";
 import EnergiaModal from "../EnergyModal";
 import CuboGeloModal from "../IceCubeModal";
+import api from "../../config/axios";
+
+interface Sublevel {
+  id: string;
+  numSublevel: number;
+  numLevel: number;
+  name: string;
+}
+interface UserInformation {
+  username: string;
+  email: string;
+  name: string;
+  qtBooster: number;
+  qtEnergy: number;
+  qtCube: number;
+  qtXpOnLevel: number;
+  qtXpTotal: number;
+  sublevel: Sublevel;
+}
 
 const SidebarNavbar = () => {
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const navigate = useNavigate();
 
   const [isBoosterModalOpen, setIsBoosterModalOpen] = useState(false);
   const [isXpModalOpen, setIsXpModalOpen] = useState(false);
   const [isEnergiaModalOpen, setIsEnergiaModalOpen] = useState(false);
   const [isCuboGeloModalOpen, setIsCuboGeloModalOpen] = useState(false);
+
+  const [userInformations, setUserInformations] = useState<UserInformation>();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        if (!user || !user.email) {
+          console.error("Email do usuário não disponível.");
+          return;
+        }
+
+        const response = await api.get(
+          `get-user?userEmail=${encodeURIComponent(user.email)}`
+        );
+        const fetchedUser = response.data;
+
+        if (fetchedUser) {
+          setUserInformations(fetchedUser);
+        } else {
+          console.error("Usuário não encontrado na resposta da API.");
+        }
+      } catch (error) {
+        console.error("Erro ao buscar usuário:", error);
+      }
+    };
+
+    fetchUser();
+  }, [user]);
 
   return (
     <>
@@ -67,38 +108,52 @@ const SidebarNavbar = () => {
       </Box>
 
       <Box className="navbar">
-        <Box className="progressBarContent" onClick={() => setIsXpModalOpen(true)}>
+        <Box
+          className="progressBarContent"
+          onClick={() => setIsXpModalOpen(true)}
+        >
           <Box className="progressBarTexts">
-            <Text fontSize="lg">Nivel 1</Text>
-            <Text fontSize="lg">50%</Text>
-            <Text fontSize="lg">Nivel 2</Text>
+            <Text fontSize="lg">Nivel {userInformations?.sublevel.numSublevel}</Text>
+            <Text fontSize="lg">{userInformations?.qtXpOnLevel}%</Text>
+            <Text fontSize="lg">Nível {userInformations?.sublevel?.numSublevel != null ? userInformations.sublevel.numSublevel + 1 : "Indisponível"}</Text>
           </Box>
-          <Progress value={50} className="progressBar" />
+          <Progress value={userInformations?.qtXpOnLevel} className="progressBar" />
         </Box>
         <Box className="icons">
-        <HStack spacing="2" onClick={() => setIsBoosterModalOpen(true)}>
-        <Image src={fireIcon} onClick={() => setIsBoosterModalOpen(true)}/>
-        <Text fontSize="lg">2</Text>
-      </HStack>
-          <HStack spacing="2" onClick={() => setIsEnergiaModalOpen(true)}>
-            <Image src={energiaCheiaIcon} />
-            <Image src={energiaCheiaIcon} />
-            <Image src={energiaCheiaIcon} />
-            <Image src={energiaVaziaIcon} />
-            <Image src={energiaVaziaIcon} />
+          <HStack spacing="2" >
+            <Image src={fireIcon} onClick={() => setIsBoosterModalOpen(true)} />
+            <Text fontSize="lg">{userInformations?.qtBooster}</Text>
+          </HStack>
+          <HStack spacing="2" onClick={() => setIsEnergiaModalOpen(true)} >
+            {[...Array(userInformations?.qtEnergy || 0)].map((_, index) => (
+              <Image key={index} src={energiaCheiaIcon} />
+            ))}
+            {[...Array(5 - (userInformations?.qtEnergy || 0))].map(
+              (_, index) => (
+                <Image key={index} src={energiaVaziaIcon} />
+              )
+            )}
           </HStack>
           <HStack spacing="2" onClick={() => setIsCuboGeloModalOpen(true)}>
             <Image src={cuboGeloIcon} />
-            <Text fontSize="lg">500</Text>
+            <Text fontSize="lg">{userInformations?.qtCube}</Text>
           </HStack>
         </Box>
       </Box>
 
       <div className="divisaoNavbar"></div>
-      <BoosterModal isOpen={isBoosterModalOpen} onClose={() => setIsBoosterModalOpen(false)} />
-      <XpModal isOpen={isXpModalOpen} onClose={() => setIsXpModalOpen(false)} /*userExp={ Adicione aqui a propriedade de pontos de experiência do usuário }*/ />
-      <EnergiaModal isOpen={isEnergiaModalOpen} onClose={() => setIsEnergiaModalOpen(false)} /*userRecharge={ Adicione aqui a propriedade de recarga de energia do usuário }*/ />
-      <CuboGeloModal isOpen={isCuboGeloModalOpen} onClose={() => setIsCuboGeloModalOpen(false)} />
+      <BoosterModal
+        isOpen={isBoosterModalOpen}
+        onClose={() => setIsBoosterModalOpen(false)}
+      />
+      <XpModal isOpen={isXpModalOpen} onClose={() => setIsXpModalOpen(false)} />
+      <EnergiaModal
+        isOpen={isEnergiaModalOpen}
+        onClose={() => setIsEnergiaModalOpen(false)}   />
+      <CuboGeloModal
+        isOpen={isCuboGeloModalOpen}
+        onClose={() => setIsCuboGeloModalOpen(false)}
+      />
     </>
   );
 };
