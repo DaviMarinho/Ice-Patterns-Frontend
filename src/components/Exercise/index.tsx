@@ -1,8 +1,20 @@
 // ExercisePageContent.tsx
 
 import React, { useState, useEffect } from "react";
-import { Box, Text, Button, Progress } from "@chakra-ui/react";
 import "./styles.css";
+import { useNavigate } from "react-router-dom";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+  Box,
+  Text,
+  Button,
+} from "@chakra-ui/react";
+import ResultModal from "../ResultModal";
 
 interface Content {
   exercise: Exercise;
@@ -38,71 +50,131 @@ const ExercisePageContent: React.FC<ExercisePageContentProps> = ({
   onPageChange,
   onAnswer,
 }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const navigate = useNavigate();
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean | null>(null);
+  const [correctAnswers, setCorrectAnswers] = useState<any>(0);
+
+  const [correctlyAnswered, setCorrectlyAnswered] = useState<string[]>([]);
 
   const handleAnswer = () => {
     if (selectedAnswer !== null) {
+      const currentExercise = exercises[currentExerciseIndex];
       const isCorrect =
-        exercises[currentExerciseIndex].alternatives.find(
-          (a) => a.num === selectedAnswer
-        )?.isAnswer || false;
-      setIsAnswerCorrect(isCorrect);
+        currentExercise.alternatives.find((a) => a.num === selectedAnswer)
+          ?.isAnswer || false;
+
+      if (
+        isCorrect &&
+        !correctlyAnswered.includes(currentExercise.exercise.id)
+      ) {
+        setCorrectAnswers(correctAnswers + 1);
+        setCorrectlyAnswered([
+          ...correctlyAnswered,
+          currentExercise.exercise.id,
+        ]);
+      }
+
+      if (currentExerciseIndex !== exercises.length - 1) {
+        onPageChange(currentExerciseIndex + 1);
+        setSelectedAnswer(null);
+      }
+
+      if (currentExerciseIndex === exercises.length - 1) {
+        setIsModalOpen(true);
+      }
     }
   };
 
-  useEffect(() => {
-    setIsAnswerCorrect(null);
-  }, [currentExerciseIndex]);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    navigate("/");
+  };
 
   const handleNextPage = () => {
     onPageChange(currentExerciseIndex + 1);
     setSelectedAnswer(null);
   };
 
+  useEffect(() => {
+    console.log(exercises);
+  }, [currentExerciseIndex]);
+
   const handlePrevPage = () => {
     onPageChange(currentExerciseIndex - 1);
   };
 
+  const formatQuestion = (question: string) => {
+    let formattedQuestion = question;
+    formattedQuestion = formattedQuestion.replace(/<q>/g, "<br />");
+    formattedQuestion = formattedQuestion.replace(/<tab>/g, "&emsp;");
+    formattedQuestion = formattedQuestion.replace(/<t>/g, "<br />&emsp;");
+    return { __html: formattedQuestion };
+  };
+
   return (
     <Box>
-      <Text fontSize="lg" className="text-title">
-        {exercises[currentExerciseIndex]?.exercise.question}
-      </Text>
-
-      <Box className="options-content">
-        {exercises[currentExerciseIndex].alternatives.map((alternative) => (
-          <Box key={alternative.num} className="option">
-            <input
-              type="radio"
-              id={alternative.num}
-              name="answer"
-              checked={selectedAnswer === alternative.num}
-              onChange={() => setSelectedAnswer(alternative.num)}
-            />
-            <label
-              htmlFor={alternative.num}
-              style={{
-                color:
-                  isAnswerCorrect !== null && alternative.isAnswer
-                    ? "green"
-                    : isAnswerCorrect !== null &&
-                      selectedAnswer === alternative.num
-                    ? "red"
-                    : "black",
-              }}
-            >
-              {alternative.text}
-            </label>
-          </Box>
-        ))}
+      <Box fontSize="lg" className="text-title">
+        <div
+          dangerouslySetInnerHTML={formatQuestion(
+            exercises[currentExerciseIndex]?.exercise.question
+          )}
+        />
       </Box>
 
-      {isAnswerCorrect !== null && (
-        <Text mt={2} color={isAnswerCorrect ? "green" : "red"}>
-          {isAnswerCorrect ? "Resposta correta!" : "Resposta incorreta!"}
-        </Text>
-      )}
+      <Box className="options-content">
+        {exercises[currentExerciseIndex].alternatives.map((alternative) => {
+          if (exercises[currentExerciseIndex].exercise.type === 0) {
+            return (
+              <Box
+                key={alternative.num}
+                className="option"
+                onChange={() => setSelectedAnswer(alternative.num)}
+              >
+                <input
+                  type="radio"
+                  id={alternative.num}
+                  name="answer"
+                  checked={selectedAnswer === alternative.num}
+                  onChange={() => setSelectedAnswer(alternative.num)}
+                />
+                <label
+                  htmlFor={alternative.num}
+                  style={{
+                    width: "100%",
+                    cursor: "pointer",
+                  }}
+                >
+                  {alternative.text}
+                </label>
+              </Box>
+            );
+          } else if (exercises[currentExerciseIndex].exercise.type === 1) {
+            return (
+              <Box key={alternative.num} className="option">
+                <input
+                  type="radio"
+                  id={alternative.num}
+                  name="answer"
+                  checked={selectedAnswer === alternative.num}
+                  onChange={() => setSelectedAnswer(alternative.num)}
+                />
+                <label
+                  htmlFor={alternative.num}
+                  style={{
+                    width: "100%",
+                    cursor: "pointer",
+                  }}
+                >
+                  {alternative.text}
+                </label>
+              </Box>
+            );
+          }
+        })}
+      </Box>
+
       <Box mt={4} className="box-bottom">
         <Button
           colorScheme="blue"
@@ -116,12 +188,27 @@ const ExercisePageContent: React.FC<ExercisePageContentProps> = ({
         <Button
           colorScheme="green"
           m={2}
-          onClick={handleNextPage}
-          isDisabled={currentExerciseIndex === exercises.length - 1}
+          onClick={() => {
+            handleAnswer();
+            handleNextPage();
+          }}
+          isDisabled={selectedAnswer === null}
+          title={
+            selectedAnswer === null
+              ? "Você tem que selecionar uma opção antes de prosseguir."
+              : ""
+          }
         >
-          Próximo
+          Responder
         </Button>
       </Box>
+      <ResultModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        correctAnswers={correctAnswers}
+        totalQuestions={exercises.length}
+        exercises={exercises}
+      />
     </Box>
   );
 };

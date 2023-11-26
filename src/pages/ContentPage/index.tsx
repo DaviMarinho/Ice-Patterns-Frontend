@@ -5,6 +5,7 @@ import SidebarNavbar from "../../components/SideBarNavBar";
 import api from "../../config/axios";
 import "./styles.css";
 import { useAuth } from "../../context/AuthContext";
+import { useParams } from "react-router-dom";
 
 const SublevelContentPage: React.FC = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const SublevelContentPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const { user } = useAuth();
+  const { level } = useParams();
   const [userInformations, setUserInformations] = useState<any>();
 
   useEffect(() => {
@@ -41,11 +43,11 @@ const SublevelContentPage: React.FC = () => {
   }, [user]);
 
   useEffect(() => {
-    if (userInformations) {
+    if (level) {
       const fetchSublevelContents = async () => {
         try {
           const response = await api.get(
-            `getSublevelContents?sublevelId=${userInformations?.sublevel.numSublevel}`
+            `getSublevelContents?sublevelId=${level}`
           );
           const { data } = response;
           setSublevelContents(data.contents);
@@ -66,11 +68,27 @@ const SublevelContentPage: React.FC = () => {
   };
 
   const handleNextPage = () => {
-    handlePageChange(currentPage + 1);
+    if (currentPage === totalPages - 1) {
+      navigate("/nivel");
+    } else {
+      handlePageChange(currentPage + 1);
+    }
   };
 
   const handlePrevPage = () => {
-    handlePageChange(currentPage - 1);
+    if (currentPage === 0) {
+      navigate("/nivel");
+    } else {
+      handlePageChange(currentPage - 1);
+    }
+  };
+
+  const formatQuestion = (question: string) => {
+    let formattedQuestion = question;
+    formattedQuestion = formattedQuestion.replace(/<q>/g, "<br />");
+    formattedQuestion = formattedQuestion.replace(/<tab>/g, "&emsp;");
+    formattedQuestion = formattedQuestion.replace(/<t>/g, "<br />&emsp;");
+    return { __html: formattedQuestion };
   };
 
   return (
@@ -98,9 +116,13 @@ const SublevelContentPage: React.FC = () => {
           >
             {sublevelContents.length > 0 && (
               <>
-                <Text className="content-text">
-                  {sublevelContents[currentPage].text}
-                </Text>
+                <Box fontSize="lg" className="text-title">
+                  <div
+                    dangerouslySetInnerHTML={formatQuestion(
+                      sublevelContents[currentPage]?.text
+                    )}
+                  />
+                </Box>
               </>
             )}
           </Container>
@@ -109,7 +131,6 @@ const SublevelContentPage: React.FC = () => {
               colorScheme="blue"
               m={2}
               onClick={handlePrevPage}
-              isDisabled={currentPage === 0}
             >
               Anterior
             </Button>
@@ -117,9 +138,8 @@ const SublevelContentPage: React.FC = () => {
               colorScheme="green"
               m={2}
               onClick={handleNextPage}
-              isDisabled={currentPage === totalPages - 1}
             >
-              Responder
+              Próximo
             </Button>
           </Box>
         </Box>

@@ -113,9 +113,9 @@ const SidebarNavbar = () => {
           onClick={() => setIsXpModalOpen(true)}
         >
           <Box className="progressBarTexts">
-            <Text fontSize="lg">Nivel {userInformations?.sublevel.numSublevel}</Text>
+            <Text fontSize="lg">Nivel {userInformations?.sublevel.numLevel}</Text>
             <Text fontSize="lg">{userInformations?.qtXpOnLevel}%</Text>
-            <Text fontSize="lg">Nível {userInformations?.sublevel?.numSublevel != null ? userInformations.sublevel.numSublevel + 1 : "Indisponível"}</Text>
+            <Text fontSize="lg">Nível {userInformations?.sublevel?.numLevel != null ? userInformations.sublevel.numLevel + 1 : "Indisponível"}</Text>
           </Box>
           <Progress value={userInformations?.qtXpOnLevel} className="progressBar" />
         </Box>

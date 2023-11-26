@@ -7,6 +7,7 @@ import api from "../../config/axios";
 import { useAuth } from "../../context/AuthContext";
 import "./styles.css";
 import ExercisePageContent from "../../components/Exercise";
+import { useParams } from "react-router-dom";
 
 interface Content {
   exercise: Exercise;
@@ -37,6 +38,9 @@ const ExercicesPage: React.FC = () => {
   const [totalPages, setTotalPages] = useState(0);
 
   const { user } = useAuth();
+  const { level } = useParams();
+
+  
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -65,11 +69,11 @@ const ExercicesPage: React.FC = () => {
   }, [user]);
 
   useEffect(() => {
-    if (userInformations) {
+    if (level) {
       const fetchSublevelContents = async () => {
         try {
           const response = await api.get(
-            `getSublevelExercises?sublevelId=${userInformations?.sublevel.numSublevel}`
+            `getSublevelExercises?sublevelId=${level}`
           );
           const { data } = response;
           setExercises(data.exercises);
@@ -81,7 +85,7 @@ const ExercicesPage: React.FC = () => {
 
       fetchSublevelContents();
     }
-  }, [userInformations]);
+  }, [level]);
 
   const handleAnswer = (isCorrect: boolean) => {
     if (isCorrect) {
@@ -108,7 +112,9 @@ const ExercicesPage: React.FC = () => {
       <SidebarNavbar />
       <Box className="container-exercises">
         <Box className="progress-box">
-          <Text className="progress-text">{currentPage + 1 + "/" + totalPages}</Text>
+          <Text className="progress-text">
+            {currentPage + 1 + "/" + totalPages}
+          </Text>
           <Progress
             className="progress-content"
             value={((currentPage + 1) / totalPages) * 100}

@@ -81,6 +81,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           navigate(from, { replace: true });
         }
       } catch (err: any) {
+        console.error(err);
         toast.error(err.response.data.error);
       }
     },

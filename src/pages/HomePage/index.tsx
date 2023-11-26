@@ -46,6 +46,8 @@ const HomePage: React.FC = () => {
         );
         const fetchedUser = response.data;
 
+        console.log(fetchedUser);
+
         if (fetchedUser) {
           setUserInformations(fetchedUser);
         } else {
@@ -66,38 +68,24 @@ const HomePage: React.FC = () => {
         <Box className="iceberg-niveis">
           <Image className="iceberg-full" src={icebergFull} />
           <Box className="niveis">
-            <Box className="conjunto-nivel">
-              <Box className="textLock">
-                <Text className="textNivel">{`Nível ${1}`}</Text>
-                {userInformations?.sublevel?.numSublevel !== undefined &&
-                  userInformations.sublevel.numSublevel >= 1 && (
-                    <Image src={cadeado} />
-                  )}
+            {[1, 2, 3].map((nivel) => (
+              <Box className="conjunto-nivel" key={nivel}>
+                <Box className="textLock">
+                  <Text className="textNivel">{`Nível ${nivel}`}</Text>
+                  {userInformations?.sublevel?.numLevel !== undefined &&
+                    userInformations.sublevel.numLevel < nivel && (
+                      <Image src={cadeado} />
+                    )}
+                </Box>
+                <div className="linha"></div>
               </Box>
-              <div className="linha"></div>
-            </Box>
-
-            <Box className="conjunto-nivel">
-              <Box className="textLock">
-                <Text className="textNivel">Nível 2</Text>
-                <Image src={cadeado} />
-              </Box>
-              <div className="linha"></div>
-            </Box>
-
-            <Box className="conjunto-nivel">
-              <Box className="textLock">
-                <Text className="textNivel">Nível 3</Text>
-                <Image src={cadeado} />
-              </Box>
-              <div className="linha"></div>
-            </Box>
+            ))}
           </Box>
         </Box>
 
         <div className="button-container">
           <button className="button-nivel" onClick={() => navigate("/nivel")}>
-            Próxima Missão
+            Missão
           </button>
         </div>
       </Box>

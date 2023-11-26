@@ -1,14 +1,14 @@
-import { Routes, Route } from 'react-router-dom';
-import { RequireAuth } from './require-auth';
-import ExternalPage  from '../../pages/ExternalPage';
-import HomePage from '../../pages/HomePage';
-import PerfilPage from '../../pages/PerfilPage';
-import QuestsPage from '../../pages/QuestsPage';
-import ShopPage from '../../pages/ShopPage';
-import ExercicesPage from '../../pages/ExercisesPage';
-import ResultPage from '../../pages/ResultPage';
-import ContentPage from '../../pages/ContentPage';
-import NivelPage from '../../pages/NivelPage';
+import { Routes, Route } from "react-router-dom";
+import { RequireAuth } from "./require-auth";
+import ExternalPage from "../../pages/ExternalPage";
+import HomePage from "../../pages/HomePage";
+import PerfilPage from "../../pages/PerfilPage";
+import QuestsPage from "../../pages/QuestsPage";
+import ShopPage from "../../pages/ShopPage";
+import ExercicesPage from "../../pages/ExercisesPage";
+import ResultPage from "../../components/ResultModal";
+import ContentPage from "../../pages/ContentPage";
+import NivelPage from "../../pages/NivelPage";
 
 export function Router() {
   return (
@@ -54,7 +54,7 @@ export function Router() {
         }
       />
       <Route
-        path="/exercise"
+        path="/exercise/:level"
         element={
           <RequireAuth>
             <ExercicesPage />
@@ -62,22 +62,13 @@ export function Router() {
         }
       />
       <Route
-        path="/content"
+        path="/content/:level"
         element={
           <RequireAuth>
             <ContentPage />
           </RequireAuth>
         }
       />
-      <Route
-        path="/result"
-        element={
-          <RequireAuth>
-            <ResultPage correctAnswers={0} totalQuestions={0} />
-          </RequireAuth>
-        }
-      />
-
       {/* ROTAS PUBLICAS */}
       <Route path="/information" element={<ExternalPage />} />
       <Route path="*" element={<p>404</p>} />

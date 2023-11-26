@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://icepatterns-backend-bd993106e512.herokuapp.com/icepatterns/",
+  baseURL: "http://localhost:4001/icepatterns/",
 });
 
 api.interceptors.request.use(
