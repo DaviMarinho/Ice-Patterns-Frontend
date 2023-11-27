@@ -1,0 +1,10 @@
+.booster-timer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #000000;
+  padding: 10px;
+}

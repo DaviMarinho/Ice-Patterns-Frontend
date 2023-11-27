@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Text, HStack, Progress, Image } from "@chakra-ui/react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./styles.css";
 import icebergLogo from "../../assets/iceberg-logo-sidebar.png";
 import homeIcon from "../../assets/house-sidebar.png";
@@ -40,6 +40,7 @@ interface UserInformation {
 const SidebarNavbar = () => {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [isBoosterModalOpen, setIsBoosterModalOpen] = useState(false);
   const [isXpModalOpen, setIsXpModalOpen] = useState(false);
@@ -113,18 +114,28 @@ const SidebarNavbar = () => {
           onClick={() => setIsXpModalOpen(true)}
         >
           <Box className="progressBarTexts">
-            <Text fontSize="lg">Nivel {userInformations?.sublevel.numLevel}</Text>
+            <Text fontSize="lg">
+              Nivel {userInformations?.sublevel.numLevel}
+            </Text>
             <Text fontSize="lg">{userInformations?.qtXpOnLevel}%</Text>
-            <Text fontSize="lg">Nível {userInformations?.sublevel?.numLevel != null ? userInformations.sublevel.numLevel + 1 : "Indisponível"}</Text>
+            <Text fontSize="lg">
+              Nível{" "}
+              {userInformations?.sublevel?.numLevel != null
+                ? userInformations.sublevel.numLevel + 1
+                : "Indisponível"}
+            </Text>
           </Box>
-          <Progress value={userInformations?.qtXpOnLevel} className="progressBar" />
+          <Progress
+            value={userInformations?.qtXpOnLevel}
+            className="progressBar"
+          />
         </Box>
         <Box className="icons">
-          <HStack spacing="2" >
+          <HStack spacing="2">
             <Image src={fireIcon} onClick={() => setIsBoosterModalOpen(true)} />
             <Text fontSize="lg">{userInformations?.qtBooster}</Text>
           </HStack>
-          <HStack spacing="2" onClick={() => setIsEnergiaModalOpen(true)} >
+          <HStack spacing="2" onClick={() => setIsEnergiaModalOpen(true)}>
             {[...Array(userInformations?.qtEnergy || 0)].map((_, index) => (
               <Image key={index} src={energiaCheiaIcon} />
             ))}
@@ -144,12 +155,16 @@ const SidebarNavbar = () => {
       <div className="divisaoNavbar"></div>
       <BoosterModal
         isOpen={isBoosterModalOpen}
-        onClose={() => setIsBoosterModalOpen(false)}
+        onClose={() => {
+          setIsBoosterModalOpen(false);
+          navigate(location.pathname);
+        }}
       />
       <XpModal isOpen={isXpModalOpen} onClose={() => setIsXpModalOpen(false)} />
       <EnergiaModal
         isOpen={isEnergiaModalOpen}
-        onClose={() => setIsEnergiaModalOpen(false)}   />
+        onClose={() => setIsEnergiaModalOpen(false)}
+      />
       <CuboGeloModal
         isOpen={isCuboGeloModalOpen}
         onClose={() => setIsCuboGeloModalOpen(false)}

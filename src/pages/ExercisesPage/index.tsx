@@ -8,6 +8,8 @@ import { useAuth } from "../../context/AuthContext";
 import "./styles.css";
 import ExercisePageContent from "../../components/Exercise";
 import { useParams } from "react-router-dom";
+import useSocket from "../../config/service/socketService";
+import { toast } from "../../utils/toast";
 
 interface Content {
   exercise: Exercise;
@@ -40,7 +42,36 @@ const ExercicesPage: React.FC = () => {
   const { user } = useAuth();
   const { level } = useParams();
 
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
   
+    const handleConquista = () => {
+      console.log("Conquista recebida");
+      toast.success("Nova conquista desbloqueada.");
+    };
+  
+    const handleMissao = () => {
+      console.log("Missão recebida");
+      toast.success("Nova missão recebida.");
+    };
+  
+    const handleBoosterDesativar = () => {
+      console.log("Booster desativado");
+      toast.warning("Booster desativado.");
+    };
+  
+    socket.on("conquista", handleConquista);
+    socket.on("missao", handleMissao);
+    socket.on("booster desativar", handleBoosterDesativar);
+  
+    return () => {
+      socket.off("conquista", handleConquista);
+      socket.off("missao", handleMissao);
+      socket.off("booster desativar", handleBoosterDesativar);
+    };
+  }, [socket]);
 
   useEffect(() => {
     const fetchUser = async () => {

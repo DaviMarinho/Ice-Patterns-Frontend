@@ -56,6 +56,8 @@
 
 .textNivel {
   margin-right: 10px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 .button-container {

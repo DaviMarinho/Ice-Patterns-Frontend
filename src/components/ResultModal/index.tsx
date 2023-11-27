@@ -78,14 +78,15 @@ const ResultModal: React.FC<ResultModalProps> = ({
     if (lastExerciseId.exerciseDone === false && percentageCorrect >= 60) {
       await levelUpUser();
 
-      const exercisesToPost = exercises.map((exercise) => ({
-        exerciseId: exercise.exercise.id,
-      }));
-
-      await postSolveExercises(userInformations?.username, exercisesToPost);
       // if(booster)
       await postReceiveTradeItem(userInformations?.username, 20);
     }
+    
+    const exercisesToPost = exercises.map((exercise) => ({
+      exerciseId: exercise.exercise.id,
+    }));
+
+    await postSolveExercises(userInformations?.username, exercisesToPost);
 
     navigate("/");
   };

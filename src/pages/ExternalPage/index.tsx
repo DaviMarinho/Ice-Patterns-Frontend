@@ -8,7 +8,7 @@ import {
   Divider,
   Center,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect } from "react";
 import LoginModal from "../../components/LoginModal";
 import RegisterModal from "../../components/RegisterModal";
 import "./styles.css";
@@ -19,6 +19,8 @@ import energiaCheia from "../../assets/Energia-cheia-Icon.png";
 import energiaVazia from "../../assets/Energia-vazia-Icon.png";
 import fireIcon from "../../assets/Fire-Icon.svg";
 import xpIcon from "../../assets/XP-Icon.svg";
+import useSocket from "../../config/service/socketService";
+import { toast } from "../../utils/toast";
 
 const ExternalPage: React.FC = () => {
   const {
@@ -31,6 +33,37 @@ const ExternalPage: React.FC = () => {
     onOpen: onRegisterOpen,
     onClose: onRegisterClose,
   } = useDisclosure();
+
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+  
+    const handleConquista = () => {
+      console.log("Conquista recebida");
+      toast.success("Nova conquista desbloqueada.");
+    };
+  
+    const handleMissao = () => {
+      console.log("Missão recebida");
+      toast.success("Nova missão recebida.");
+    };
+  
+    const handleBoosterDesativar = () => {
+      console.log("Booster desativado");
+      toast.warning("Booster desativado.");
+    };
+  
+    socket.on("conquista", handleConquista);
+    socket.on("missao", handleMissao);
+    socket.on("booster desativar", handleBoosterDesativar);
+  
+    return () => {
+      socket.off("conquista", handleConquista);
+      socket.off("missao", handleMissao);
+      socket.off("booster desativar", handleBoosterDesativar);
+    };
+  }, [socket]);
 
   return (
     <ChakraProvider>

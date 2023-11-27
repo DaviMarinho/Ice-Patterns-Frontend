@@ -6,6 +6,8 @@ import { Box, Image, Text, Progress } from "@chakra-ui/react";
 import throphy from "../../assets/throphy-quests.png";
 import api from "../../config/axios";
 import { useAuth } from "../../context/AuthContext";
+import useSocket from "../../config/service/socketService";
+import { toast } from "../../utils/toast";
 
 interface Mission {
   id: string;
@@ -30,6 +32,37 @@ interface UserMission {
 const QuestsPage: React.FC = () => {
   const [missions, setMissions] = useState<UserMission[]>([]);
   const { user } = useAuth();
+
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+  
+    const handleConquista = () => {
+      console.log("Conquista recebida");
+      toast.success("Nova conquista desbloqueada.");
+    };
+  
+    const handleMissao = () => {
+      console.log("Missão recebida");
+      toast.success("Nova missão recebida.");
+    };
+  
+    const handleBoosterDesativar = () => {
+      console.log("Booster desativado");
+      toast.warning("Booster desativado.");
+    };
+  
+    socket.on("conquista", handleConquista);
+    socket.on("missao", handleMissao);
+    socket.on("booster desativar", handleBoosterDesativar);
+  
+    return () => {
+      socket.off("conquista", handleConquista);
+      socket.off("missao", handleMissao);
+      socket.off("booster desativar", handleBoosterDesativar);
+    };
+  }, [socket]);
 
   useEffect(() => {
     const fetchMissions = async () => {
@@ -64,6 +97,9 @@ const QuestsPage: React.FC = () => {
                 <Progress value={userMission.progress} className="progressBar-quests" />
               </Box>
               <Image src={throphy}></Image>
+            </Box>
+            <Box>
+            {userMission.mission.rewardCube}
             </Box>
           </Box>
         ))}

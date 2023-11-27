@@ -9,13 +9,47 @@ import circleQuestion from "../../assets/circle-question-solid 1.png";
 import { Tooltip } from "react-tooltip";
 import { useNavigate } from "react-router-dom";
 import cadeado from "../../assets/cadeado.png";
-import { userInfo } from "os";
+import useSocket from "../../config/service/socketService";
+import { toast } from "../../utils/toast";
+import { useParams } from "react-router-dom";
 
 const NivelPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [userInformations, setUserInformations] = useState<any>();
   const [sublevels, setSublevels] = useState<any[]>([]);
+  const { levelId } = useParams();
+
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+  
+    const handleConquista = () => {
+      console.log("Conquista recebida");
+      toast.success("Nova conquista desbloqueada.");
+    };
+  
+    const handleMissao = () => {
+      console.log("Missão recebida");
+      toast.success("Nova missão recebida.");
+    };
+  
+    const handleBoosterDesativar = () => {
+      console.log("Booster desativado");
+      toast.warning("Booster desativado.");
+    };
+  
+    socket.on("conquista", handleConquista);
+    socket.on("missao", handleMissao);
+    socket.on("booster desativar", handleBoosterDesativar);
+  
+    return () => {
+      socket.off("conquista", handleConquista);
+      socket.off("missao", handleMissao);
+      socket.off("booster desativar", handleBoosterDesativar);
+    };
+  }, [socket]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -46,7 +80,7 @@ const NivelPage: React.FC = () => {
   const fetchSublevels = async () => {
     try {
       const response = await api.get(
-        `getSublevelsPerLevel?levelId=${userInformations?.sublevel.numLevel}`
+        `getSublevelsPerLevel?levelId=${levelId}` // Use levelId to fetch the sublevels
       );
       const fetchedSublevels = response.data.sublevels;
 
@@ -62,7 +96,7 @@ const NivelPage: React.FC = () => {
 
   useEffect(() => {
     fetchSublevels();
-  }, [userInformations]);
+  }, [levelId]);
 
   return (
     <>
@@ -70,10 +104,16 @@ const NivelPage: React.FC = () => {
       <SidebarNavbar />
       <Box className="container-nivel">
         <Box className="header">
-          <Text
-            fontSize="lg"
-            className="text-header"
-          >{`Nível ${userInformations?.sublevel?.numLevel}.${userInformations?.sublevel?.numSublevel}`}</Text>
+          <Box>
+            <Text
+              fontSize="lg"
+              className="text-header"
+            >{`Seu nível: ${userInformations?.sublevel?.numLevel}.${userInformations?.sublevel?.numSublevel}`}</Text>
+            <Text
+              fontSize="lg"
+              className="text-header"
+            >{`Página atual: ${levelId}`}</Text>
+          </Box>
           <Box className="header-buttons">
             <button
               className="button-header"
@@ -96,15 +136,18 @@ const NivelPage: React.FC = () => {
                 <Box className="box-icons">
                   {userInformations &&
                   userInformations.sublevel &&
+                  userInformations.sublevel.numLevel !== undefined &&
                   userInformations.sublevel.numSublevel !== undefined &&
-                  userInformations.sublevel.numSublevel >=
-                    sublevel.numSublevel ? (
+                  (userInformations.sublevel.numLevel > sublevel.numLevel ||
+                    (userInformations.sublevel.numLevel === sublevel.numLevel &&
+                      userInformations.sublevel.numSublevel >=
+                        sublevel.numSublevel)) ? (
                     <>
                       <Image
                         className="icons-tasks"
                         data-tooltip-id="my-tooltip"
                         data-tooltip-content="Conteúdo"
-                        onClick={() => navigate("/content/" + sublevel.id)}
+                        onClick={() => navigate("/content/" + sublevel.id, { state: { levelId: sublevel.numLevel } })}
                         src={circleQuestion}
                       />
                       <Image

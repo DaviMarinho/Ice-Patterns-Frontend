@@ -7,7 +7,10 @@ import cadeado from "../../assets/cadeado.png";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../config/axios";
 import { useNavigate } from "react-router-dom";
-
+import { io } from "socket.io-client";
+import { toast } from "../../utils/toast";
+import useSocket from "../../config/service/socketService";
+import { useEffect, useState } from "react";
 interface Sublevel {
   id: string;
   numSublevel: number;
@@ -30,10 +33,40 @@ const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const [userInformations, setUserInformations] =
-    React.useState<UserInformation>();
+  const [userInformations, setUserInformations] = useState<UserInformation>();
 
-  React.useEffect(() => {
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+  
+    const handleConquista = () => {
+      console.log("Conquista recebida");
+      toast.success("Nova conquista desbloqueada.");
+    };
+  
+    const handleMissao = () => {
+      console.log("Missão recebida");
+      toast.success("Nova missão recebida.");
+    };
+  
+    const handleBoosterDesativar = () => {
+      console.log("Booster desativado");
+      toast.warning("Booster desativado.");
+    };
+  
+    socket.on("conquista", handleConquista);
+    socket.on("missao", handleMissao);
+    socket.on("booster desativar", handleBoosterDesativar);
+  
+    return () => {
+      socket.off("conquista", handleConquista);
+      socket.off("missao", handleMissao);
+      socket.off("booster desativar", handleBoosterDesativar);
+    };
+  }, [socket]);
+
+  useEffect(() => {
     const fetchUser = async () => {
       try {
         if (!user || !user.email) {
@@ -45,8 +78,6 @@ const HomePage: React.FC = () => {
           `get-user?userEmail=${encodeURIComponent(user.email)}`
         );
         const fetchedUser = response.data;
-
-        console.log(fetchedUser);
 
         if (fetchedUser) {
           setUserInformations(fetchedUser);
@@ -70,7 +101,10 @@ const HomePage: React.FC = () => {
           <Box className="niveis">
             {[1, 2, 3].map((nivel) => (
               <Box className="conjunto-nivel" key={nivel}>
-                <Box className="textLock">
+                <Box
+                  className="textLock"
+                  onClick={() => navigate(`/nivel/${nivel}`)}
+                >
                   <Text className="textNivel">{`Nível ${nivel}`}</Text>
                   {userInformations?.sublevel?.numLevel !== undefined &&
                     userInformations.sublevel.numLevel < nivel && (
@@ -84,8 +118,8 @@ const HomePage: React.FC = () => {
         </Box>
 
         <div className="button-container">
-          <button className="button-nivel" onClick={() => navigate("/nivel")}>
-            Missão
+          <button className="button-nivel" onClick={() => navigate(`/nivel/${userInformations?.sublevel.numLevel}`)}>
+            Nível
           </button>
         </div>
       </Box>

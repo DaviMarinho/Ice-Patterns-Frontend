@@ -105,7 +105,7 @@ const ExercisePageContent: React.FC<ExercisePageContentProps> = ({
     let formattedQuestion = question;
     formattedQuestion = formattedQuestion.replace(/<q>/g, "<br />");
     formattedQuestion = formattedQuestion.replace(/<tab>/g, "&emsp;");
-    formattedQuestion = formattedQuestion.replace(/<t>/g, "<br />&emsp;");
+    formattedQuestion = formattedQuestion.replace(/<t>/g, "<br />&emsp;-&emsp;");
     return { __html: formattedQuestion };
   };
 

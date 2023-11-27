@@ -6,6 +6,8 @@ import api from "../../config/axios";
 import "./styles.css";
 import { useAuth } from "../../context/AuthContext";
 import { useParams } from "react-router-dom";
+import useSocket from "../../config/service/socketService";
+import { toast } from "../../utils/toast";
 
 const SublevelContentPage: React.FC = () => {
   const navigate = useNavigate();
@@ -14,7 +16,40 @@ const SublevelContentPage: React.FC = () => {
   const [totalPages, setTotalPages] = useState(0);
   const { user } = useAuth();
   const { level } = useParams();
+  const location = useLocation();
   const [userInformations, setUserInformations] = useState<any>();
+  const numLevel = location.state?.levelId;
+
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+  
+    const handleConquista = () => {
+      console.log("Conquista recebida");
+      toast.success("Nova conquista desbloqueada.");
+    };
+  
+    const handleMissao = () => {
+      console.log("Missão recebida");
+      toast.success("Nova missão recebida.");
+    };
+  
+    const handleBoosterDesativar = () => {
+      console.log("Booster desativado");
+      toast.warning("Booster desativado.");
+    };
+  
+    socket.on("conquista", handleConquista);
+    socket.on("missao", handleMissao);
+    socket.on("booster desativar", handleBoosterDesativar);
+  
+    return () => {
+      socket.off("conquista", handleConquista);
+      socket.off("missao", handleMissao);
+      socket.off("booster desativar", handleBoosterDesativar);
+    };
+  }, [socket]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -69,7 +104,7 @@ const SublevelContentPage: React.FC = () => {
 
   const handleNextPage = () => {
     if (currentPage === totalPages - 1) {
-      navigate("/nivel");
+      navigate(`/nivel/${numLevel}`);
     } else {
       handlePageChange(currentPage + 1);
     }
@@ -77,7 +112,7 @@ const SublevelContentPage: React.FC = () => {
 
   const handlePrevPage = () => {
     if (currentPage === 0) {
-      navigate("/nivel");
+      navigate(`/nivel/${numLevel}`);
     } else {
       handlePageChange(currentPage - 1);
     }
@@ -87,7 +122,7 @@ const SublevelContentPage: React.FC = () => {
     let formattedQuestion = question;
     formattedQuestion = formattedQuestion.replace(/<q>/g, "<br />");
     formattedQuestion = formattedQuestion.replace(/<tab>/g, "&emsp;");
-    formattedQuestion = formattedQuestion.replace(/<t>/g, "<br />&emsp;");
+    formattedQuestion = formattedQuestion.replace(/<t>/g, "<br />&emsp;-&emsp;");
     return { __html: formattedQuestion };
   };
 

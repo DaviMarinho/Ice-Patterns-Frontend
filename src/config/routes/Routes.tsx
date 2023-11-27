@@ -46,7 +46,7 @@ export function Router() {
         }
       />
       <Route
-        path="/nivel"
+        path="/nivel/:levelId"
         element={
           <RequireAuth>
             <NivelPage />
