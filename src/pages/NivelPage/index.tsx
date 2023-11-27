@@ -12,6 +12,7 @@ import cadeado from "../../assets/cadeado.png";
 import useSocket from "../../config/service/socketService";
 import { toast } from "../../utils/toast";
 import { useParams } from "react-router-dom";
+import { InfoIcon } from "@chakra-ui/icons";
 
 const NivelPage: React.FC = () => {
   const navigate = useNavigate();
@@ -115,6 +116,12 @@ const NivelPage: React.FC = () => {
             >{`Página atual: ${levelId}`}</Text>
           </Box>
           <Box className="header-buttons">
+             <InfoIcon
+                boxSize={8} // Ajuste o tamanho conforme necessário
+                cursor="pointer"
+                data-tooltip-id="my-tooltip"
+                data-tooltip-content="Os conteúdos e exercícios são baseados em referências como Gamma et al e Refactoring Guru"
+              />
             <button
               className="button-header"
               disabled={userInformations?.sublevel?.numSublevel < 4}

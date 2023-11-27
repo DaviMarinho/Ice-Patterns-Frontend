@@ -19,6 +19,7 @@ import { BoosterContext } from "../../context/BoosterContext";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../config/axios";
 import "./styles.css";
+import { toast } from "../../utils/toast";
 
 interface BoosterModalProps {
   isOpen: boolean;
@@ -46,6 +47,7 @@ const BoosterModal: React.FC<BoosterModalProps> = ({ isOpen, onClose }) => {
       }
     } catch (error) {
       console.error("Erro ao ativar o booster:", error);
+      toast.error("Não foi possível ativar o booster")
     }
   };
 
