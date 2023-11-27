@@ -9,12 +9,16 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
+  Image,
 } from "@chakra-ui/react";
+import cuboGeloIcon from "../../assets/cubo-gelo-navbar.png";
 import { useNavigate } from "react-router-dom";
 import SidebarNavbar from "../SideBarNavBar";
 import "./styles.css";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../config/axios";
+import { BoosterContext } from "../../context/BoosterContext";
+import xpIcon from "../../assets/XP-Icon.svg";
 
 interface ResultModalProps {
   isOpen: boolean;
@@ -30,9 +34,81 @@ const ResultModal: React.FC<ResultModalProps> = ({
   totalQuestions,
   exercises,
 }) => {
+  const { boosterActive } = React.useContext(BoosterContext);
   const { user } = useAuth();
   const navigate = useNavigate();
   const [userInformations, setUserInformations] = useState<any>();
+  const [rewards, setRewards] = useState<React.ReactNode | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (!user || !user.email) {
+          console.error("Email do usuário não disponível.");
+          return;
+        }
+
+        const response = await api.get(
+          `get-user?userEmail=${encodeURIComponent(user.email)}`
+        );
+        const fetchedUser = response.data;
+
+        if (fetchedUser) {
+          setUserInformations(fetchedUser);
+
+          const val = getLastExerciseId();
+          const lastExerciseId = await getUserExercise(
+            fetchedUser.username,
+            val
+          );
+
+          if (
+            lastExerciseId &&
+            lastExerciseId.exerciseDone === false &&
+            percentageCorrect >= 60
+          ) {
+            const rewardsJSX = (
+              <Box>
+                <Text style={{ fontWeight: "bold" }}>Recompensas:</Text>
+                {userInformations.sublevel.numSublevel !== 4 && (
+                  <Text className="result-rewards">
+                    <Image className="icon-result" src={xpIcon} /> = 30
+                  </Text>
+                )}
+                {userInformations.sublevel.numSublevel === 4 && (
+                  <Text>Você subiu de nível!</Text>
+                )}
+                <Text className="result-rewards">
+                  <Image className="icon-result" src={cuboGeloIcon} /> ={" "}
+                  {boosterActive ? "20 x 2" : "20"}
+                </Text>
+              </Box>
+            );
+
+            setRewards(rewardsJSX);
+          } else {
+            const rewardsJSX = (
+              <Box>
+                <Text style={{ fontWeight: "bold" }}>Recompensas:</Text>
+                <Text className="result-rewards">
+                  <Image className="icon-result" src={cuboGeloIcon} /> ={" "}
+                  {boosterActive ? "5 x 2" : "5"}
+                </Text>
+              </Box>
+            );
+
+            setRewards(rewardsJSX);
+          }
+        } else {
+          console.error("Usuário não encontrado na resposta da API.");
+        }
+      } catch (error) {
+        console.error("Erro ao buscar usuário:", error);
+      }
+    };
+
+    fetchData();
+  }, [user, getLastExerciseId, getUserExercise, boosterActive]);
 
   const percentageCorrect = parseFloat(
     ((correctAnswers / totalQuestions) * 100).toFixed(2)
@@ -75,18 +151,29 @@ const ResultModal: React.FC<ResultModalProps> = ({
       val
     );
 
-    if (lastExerciseId.exerciseDone === false && percentageCorrect >= 60) {
+    if (lastExerciseId &&
+      lastExerciseId.exerciseDone === false &&
+      percentageCorrect >= 60) {
       await levelUpUser();
 
-      // if(booster)
-      await postReceiveTradeItem(userInformations?.username, 20);
-    }
-    
-    const exercisesToPost = exercises.map((exercise) => ({
-      exerciseId: exercise.exercise.id,
-    }));
+      if (boosterActive) {
+        await postReceiveTradeItem(userInformations?.username, 40);
+      } else {
+        await postReceiveTradeItem(userInformations?.username, 20);
+      }
 
-    await postSolveExercises(userInformations?.username, exercisesToPost);
+      const exercisesToPost = exercises.map((exercise) => ({
+        exerciseId: exercise.exercise.id,
+      }));
+
+      await postSolveExercises(userInformations?.username, exercisesToPost);
+    } else {
+      if (boosterActive) {
+        await postReceiveTradeItem(userInformations?.username, 10);
+      } else {
+        await postReceiveTradeItem(userInformations?.username, 5);
+      }
+    }
 
     navigate("/");
   };
@@ -158,7 +245,7 @@ const ResultModal: React.FC<ResultModalProps> = ({
     });
     return response.data;
   }
-
+  
   return (
     <>
       <SidebarNavbar />
@@ -173,23 +260,16 @@ const ResultModal: React.FC<ResultModalProps> = ({
               alignItems: "center",
               justifyContent: "center",
               flexDirection: "column",
+              lineHeight: "2em",
             }}
           >
             <Text>
               {percentageCorrect >= 60
-                ? "Você completou mais uma série de exercícios! Parabéns!"
-                : "Tente novamente"}
+                ? "Você completou uma série de exercícios! Parabéns!"
+                : "Tente novamente, você vai conseguir na próxima!"}
             </Text>
             <Text>Você teve {percentageCorrect}% de acerto</Text>
-            {percentageCorrect >= 60 &&
-              userInformations.sublevel.numSublevel !== 4 && (
-                <Text>Recompensas XP = 30</Text>
-              )}
-            {percentageCorrect >= 60 &&
-              userInformations.sublevel.numSublevel === 4 && (
-                <Text>Você subiu de nível!</Text>
-              )}
-            {percentageCorrect >= 60 && <Text>Cubos = 20</Text>}
+            {rewards}
             <Button colorScheme="blue" m={2} onClick={handleBackToHome}>
               Voltar à Página Inicial
             </Button>

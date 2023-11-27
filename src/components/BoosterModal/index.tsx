@@ -2,19 +2,18 @@ import React from "react";
 import {
   Box,
   Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-  Image,
-  Text,
   HStack,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
+  Image,
 } from "@chakra-ui/react";
 import fireIcon from "../../assets/fire-navbar.png";
-import axios from "axios";
 import { BoosterContext } from "../../context/BoosterContext";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../config/axios";
@@ -27,7 +26,8 @@ interface BoosterModalProps {
 }
 
 const BoosterModal: React.FC<BoosterModalProps> = ({ isOpen, onClose }) => {
-  const { boosterActive, setBoosterActive, countdown, setCountdown } = React.useContext(BoosterContext);
+  const { boosterActive, setBoosterActive, countdown, setCountdown } =
+    React.useContext(BoosterContext);
   const { user } = useAuth();
 
   const handleActivate = async () => {
@@ -40,10 +40,10 @@ const BoosterModal: React.FC<BoosterModalProps> = ({ isOpen, onClose }) => {
       const response = await api.post("/activateBooster", {
         username: user.username,
       });
-      
+
       if (response.status === 200) {
         setBoosterActive(true);
-        setCountdown(300);
+        setCountdown(20);
       }
     } catch (error) {
       console.error("Erro ao ativar o booster:", error);
@@ -51,17 +51,47 @@ const BoosterModal: React.FC<BoosterModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  // No BoosterModal.tsx
+
   React.useEffect(() => {
     let timerId: NodeJS.Timeout;
 
     if (countdown > 0) {
-      timerId = setTimeout(() => setCountdown(countdown - 1), 1000);
+      timerId = setTimeout(() => {
+        setCountdown(countdown - 1);
+        localStorage.setItem("countdown", String(countdown - 1));
+      }, 1000);
     } else if (countdown === 0 && boosterActive) {
       setBoosterActive(false);
+      localStorage.setItem("boosterActive", "false");
     }
 
     return () => clearTimeout(timerId);
-  }, [countdown, boosterActive, setBoosterActive]);
+  }, [countdown, boosterActive, setBoosterActive, setCountdown]);
+
+  // No início do componente, recupere os valores do localStorage
+
+  React.useEffect(() => {
+    const storedCountdown = localStorage.getItem("countdown");
+    const storedBoosterActive = localStorage.getItem("boosterActive");
+
+    if (storedCountdown) {
+      setCountdown(Number(storedCountdown));
+    }
+
+    if (storedBoosterActive) {
+      setBoosterActive(storedBoosterActive === "true");
+    }
+  }, []);
+
+  // Função para formatar o tempo em minutos e segundos
+  const formatTime = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${
+      remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds
+    }`;
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -90,11 +120,15 @@ const BoosterModal: React.FC<BoosterModalProps> = ({ isOpen, onClose }) => {
             impulso.
           </Text>
         </ModalBody>
-          <Box className="booster-timer">{countdown > 0 && <Text>{countdown}</Text>}</Box>
+        <Box className="booster-timer">
+          {countdown > 0 && <Text>{formatTime(countdown)}</Text>}
+        </Box>
         <ModalFooter>
-          <Button disabled={boosterActive} colorScheme="green" onClick={handleActivate}>
-            Ativar
-          </Button>
+          {boosterActive && (
+            <Button colorScheme="green" onClick={handleActivate}>
+              Ativar
+            </Button>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>

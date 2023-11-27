@@ -18,7 +18,7 @@
   margin-bottom: 50px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   padding: 2rem;
 }
 
@@ -38,6 +38,7 @@
   font-style: normal;
   font-weight: 700;
   line-height: normal;
+  padding-left: 1rem;
 }
 
 .progressBar-quests {
@@ -66,4 +67,12 @@
   font-style: normal;
   font-weight: 700;
   line-height: normal;
+}
+
+.quest-reward {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-direction: row;
 }

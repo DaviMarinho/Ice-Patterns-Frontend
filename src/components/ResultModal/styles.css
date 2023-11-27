@@ -9,3 +9,14 @@
     margin-top: 50px;
     margin-left: 250px;
   }
+
+  .icon-result {
+    width: 40px;
+    height: 40px;
+  }
+
+  .result-rewards {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }

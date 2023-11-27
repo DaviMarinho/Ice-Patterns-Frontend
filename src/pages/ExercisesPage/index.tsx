@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Box, Text, Button, Progress } from "@chakra-ui/react";
+import { Box, Text, Progress } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import ExerciseComponent from "../../components/Exercise";
 import SidebarNavbar from "../../components/SideBarNavBar";
 import api from "../../config/axios";
-import { useAuth } from "../../context/AuthContext";
 import "./styles.css";
 import ExercisePageContent from "../../components/Exercise";
 import { useParams } from "react-router-dom";
 import useSocket from "../../config/service/socketService";
 import { toast } from "../../utils/toast";
+import { useAuth } from "../../context/AuthContext";
+import { BoosterContext } from "../../context/BoosterContext";
 
 interface Content {
   exercise: Exercise;
@@ -35,69 +35,62 @@ const ExercicesPage: React.FC = () => {
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const navigate = useNavigate();
-  const [userInformations, setUserInformations] = useState<any>();
   const [currentPage, setCurrentPage] = useState(currentExerciseIndex);
   const [totalPages, setTotalPages] = useState(0);
-
   const { user } = useAuth();
+  const { setBoosterActive } = React.useContext(BoosterContext);
+
   const { level } = useParams();
 
   const socket = useSocket();
 
   useEffect(() => {
     if (!socket) return;
-  
+
+    if (!user || !user.email) {
+      console.error("Email do usuário não disponível.");
+      return;
+    }
+
     const handleConquista = () => {
       console.log("Conquista recebida");
-      toast.success("Nova conquista desbloqueada.");
+      toast.success("Nova conquista alcançada!");
     };
-  
-    const handleMissao = () => {
+
+    const handleMissao = (dados: any) => {
       console.log("Missão recebida");
-      toast.success("Nova missão recebida.");
+      toast.success("Você completou uma missão!");
+
+      postReceiveTradeItem(user.username, dados.rewardCube);
     };
-  
+
     const handleBoosterDesativar = () => {
       console.log("Booster desativado");
       toast.warning("Booster desativado.");
+
+      setBoosterActive(false);
     };
-  
+
+
     socket.on("conquista", handleConquista);
-    socket.on("missao", handleMissao);
+    socket.on("missao", (dados) => handleMissao(dados));
     socket.on("booster desativar", handleBoosterDesativar);
-  
+
     return () => {
       socket.off("conquista", handleConquista);
       socket.off("missao", handleMissao);
       socket.off("booster desativar", handleBoosterDesativar);
     };
-  }, [socket]);
+  }, [socket, user]);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        if (!user || !user.email) {
-          console.error("Email do usuário não disponível.");
-          return;
-        }
-
-        const response = await api.get(
-          `get-user?userEmail=${encodeURIComponent(user.email)}`
-        );
-        const fetchedUser = response.data;
-
-        if (fetchedUser) {
-          setUserInformations(fetchedUser);
-        } else {
-          console.error("Usuário não encontrado na resposta da API.");
-        }
-      } catch (error) {
-        console.error("Erro ao buscar usuário:", error);
-      }
-    };
-
-    fetchUser();
-  }, [user]);
+  async function postReceiveTradeItem(username: string, qtCube: number) {
+    const response = await api.post("/receiveTradeItem", {
+      username,
+      qtCube,
+      isReceiving: true,
+    });
+    return response.data;
+  }
 
   useEffect(() => {
     if (level) {

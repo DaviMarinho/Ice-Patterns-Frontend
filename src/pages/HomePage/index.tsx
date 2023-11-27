@@ -1,16 +1,16 @@
 import * as React from "react";
 import "./styles.css";
 import SidebarNavbar from "../../components/SideBarNavBar";
-import { Box, Image, Text, Button } from "@chakra-ui/react";
+import { Box, Image, Text } from "@chakra-ui/react";
 import icebergFull from "../../assets/iceberg-full.png";
 import cadeado from "../../assets/cadeado.png";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../config/axios";
 import { useNavigate } from "react-router-dom";
-import { io } from "socket.io-client";
 import { toast } from "../../utils/toast";
 import useSocket from "../../config/service/socketService";
 import { useEffect, useState } from "react";
+import { BoosterContext } from "../../context/BoosterContext";
 interface Sublevel {
   id: string;
   numSublevel: number;
@@ -32,39 +32,59 @@ interface UserInformation {
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-
+  const { setBoosterActive } = React.useContext(BoosterContext);
+  
   const [userInformations, setUserInformations] = useState<UserInformation>();
 
   const socket = useSocket();
 
   useEffect(() => {
     if (!socket) return;
-  
+
+    if (!user || !user.email) {
+      console.error("Email do usuário não disponível.");
+      return;
+    }
+
     const handleConquista = () => {
       console.log("Conquista recebida");
-      toast.success("Nova conquista desbloqueada.");
+      toast.success("Nova conquista alcançada!");
     };
-  
-    const handleMissao = () => {
+
+    const handleMissao = (dados: any) => {
       console.log("Missão recebida");
-      toast.success("Nova missão recebida.");
+      toast.success("Você completou uma missão!");
+
+      postReceiveTradeItem(user.username, dados.rewardCube);
     };
-  
+
     const handleBoosterDesativar = () => {
       console.log("Booster desativado");
       toast.warning("Booster desativado.");
+
+      setBoosterActive(false);
     };
-  
+
+
     socket.on("conquista", handleConquista);
-    socket.on("missao", handleMissao);
+    socket.on("missao", (dados) => handleMissao(dados));
     socket.on("booster desativar", handleBoosterDesativar);
-  
+
     return () => {
       socket.off("conquista", handleConquista);
       socket.off("missao", handleMissao);
       socket.off("booster desativar", handleBoosterDesativar);
     };
-  }, [socket]);
+  }, [socket, user]);
+
+  async function postReceiveTradeItem(username: string, qtCube: number) {
+    const response = await api.post("/receiveTradeItem", {
+      username,
+      qtCube,
+      isReceiving: true,
+    });
+    return response.data;
+  }
 
   useEffect(() => {
     const fetchUser = async () => {
