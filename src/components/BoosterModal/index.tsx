@@ -51,8 +51,6 @@ const BoosterModal: React.FC<BoosterModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  // No BoosterModal.tsx
-
   React.useEffect(() => {
     let timerId: NodeJS.Timeout;
 
@@ -68,8 +66,6 @@ const BoosterModal: React.FC<BoosterModalProps> = ({ isOpen, onClose }) => {
 
     return () => clearTimeout(timerId);
   }, [countdown, boosterActive, setBoosterActive, setCountdown]);
-
-  // No início do componente, recupere os valores do localStorage
 
   React.useEffect(() => {
     const storedCountdown = localStorage.getItem("countdown");
