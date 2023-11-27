@@ -49,30 +49,30 @@ const SidebarNavbar = () => {
   const [userInformations, setUserInformations] = useState<UserInformation>();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        if (!user || !user.email) {
-          console.error("Email do usuário não disponível.");
-          return;
-        }
-
-        const response = await api.get(
-          `get-user?userEmail=${encodeURIComponent(user.email)}`
-        );
-        const fetchedUser = response.data;
-
-        if (fetchedUser) {
-          setUserInformations(fetchedUser);
-        } else {
-          console.error("Usuário não encontrado na resposta da API.");
-        }
-      } catch (error) {
-        console.error("Erro ao buscar usuário:", error);
-      }
-    };
-
     fetchUser();
   }, [user]);
+
+  const fetchUser = async () => {
+    try {
+      if (!user || !user.email) {
+        console.error("Email do usuário não disponível.");
+        return;
+      }
+
+      const response = await api.get(
+        `get-user?userEmail=${encodeURIComponent(user.email)}`
+      );
+      const fetchedUser = response.data;
+
+      if (fetchedUser) {
+        setUserInformations(fetchedUser);
+      } else {
+        console.error("Usuário não encontrado na resposta da API.");
+      }
+    } catch (error) {
+      console.error("Erro ao buscar usuário:", error);
+    }
+  };
 
   return (
     <>

@@ -26,7 +26,6 @@ const ShopPage: React.FC = () => {
           `get-user?userEmail=${encodeURIComponent(user.email)}`
         );
         const fetchedUser = response.data;
-        console.log(fetchedUser);
 
         if (fetchedUser) {
           setUserInformations(fetchedUser);
@@ -55,6 +54,13 @@ const ShopPage: React.FC = () => {
           isReceiving: true,
         });
         toast.success("Energia recebida com sucesso!");
+
+        // Atualiza as informações do usuário
+        setUserInformations((prev: any) => ({
+          ...prev,
+          qtCube: prev.qtCube - qtCubo,
+          qtEnergy: prev.qtEnergy + 1,
+        }));
       } else if (qtCubo === 150 && userInformations.qtEnergy >= 5) {
         toast.warning("Você já possui 5 energias!");
       }
@@ -64,15 +70,22 @@ const ShopPage: React.FC = () => {
           qtCube: qtCubo,
           isReceiving: false,
         });
+
         await api.post("/receiveTradeItem", {
           username: userInformations.username,
           qtBooster: 1,
           isReceiving: true,
         });
         toast.success("Booster recebido com sucesso!");
+
+        // Atualiza as informações do usuário
+        setUserInformations((prev: any) => ({
+          ...prev,
+          qtCube: prev.qtCube - qtCubo,
+          qtBooster: prev.qtBooster + 1,
+        }));
       }
     } catch (error: any) {
-      console.log(error);
       toast.error(error.response.data.error);
     }
   };

@@ -29,7 +29,6 @@ const NivelPage: React.FC = () => {
           `get-user?userEmail=${encodeURIComponent(user.email)}`
         );
         const fetchedUser = response.data;
-        console.log(fetchedUser);
 
         if (fetchedUser) {
           setUserInformations(fetchedUser);

@@ -97,10 +97,6 @@ const ExercisePageContent: React.FC<ExercisePageContentProps> = ({
     setSelectedAnswer(null);
   };
 
-  useEffect(() => {
-    console.log(exercises);
-  }, [currentExerciseIndex]);
-
   const handlePrevPage = () => {
     onPageChange(currentExerciseIndex - 1);
   };
