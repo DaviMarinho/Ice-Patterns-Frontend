@@ -3,13 +3,14 @@ import {
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
-} from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { toast } from '../utils/toast';
-import api from '../config/axios';
-import { SignedUser, SignInCredentials, AuthResponse } from '../types/auth.d';
+} from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "../utils/toast";
+import api from "../config/axios";
+import { SignedUser, SignInCredentials, AuthResponse } from "../types/auth.d";
 
 interface AuthContextData {
   signOut(): void;
@@ -29,56 +30,63 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState<SignedUser | null>(() => {
-    const loadedUser = localStorage.getItem('user');
+    const loadedUser = localStorage.getItem("user");
 
-    if (!loadedUser) return {} as SignedUser;
+    if (!loadedUser) return null;
 
     return JSON.parse(loadedUser);
   });
   const isAuthenticated = !!user?.token;
 
   const signIn = useCallback(
-    async ({ identifier, password }: SignInCredentials) => {
+    async ({ email, password }: SignInCredentials) => {
       try {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
         const response = await api.post<AuthResponse>(`login`, {
-          identifier,
+          email,
           password,
         });
 
-        const {
-          email,
-          expireIn,
-          name,
-          username,
-          token,
-          id,
-          temporaryPassword,
-        } = response.data;
-
-        localStorage.setItem('token', token);
-        localStorage.setItem(
-          'user',
-          JSON.stringify({
-            name,
+        if (response.data.token) {
+          const {
             email,
             expireIn,
-            token,
+            name,
             username,
+            token,
             id,
             temporaryPassword,
-          })
-        );
+          } = response.data;
 
-        setUser({ email, expireIn, name, token, username, id });
+          localStorage.setItem("token", token);
+          localStorage.setItem(
+            "user",
+            JSON.stringify({
+              name,
+              email,
+              expireIn,
+              token,
+              username,
+              id,
+              temporaryPassword,
+            })
+          );
 
-        api.defaults.headers.common.Authorization = `Bearer ${token}`;
+          setUser({ email, expireIn, name, token, username, id });
 
-        const from = location.state?.from?.pathname || '/';
+          api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
-        if (temporaryPassword) {
-          navigate('/change-password');
+          const from = location.state?.from?.pathname || "/";
+
+          if (temporaryPassword) {
+            navigate("/change-password");
+          } else {
+            navigate(from, { replace: true });
+          }
         } else {
-          navigate(from, { replace: true });
+          throw new Error("Login failed");
         }
       } catch (err: any) {
         console.error(err);
@@ -88,23 +96,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
     [navigate, location.state?.from?.pathname]
   );
 
-  const signOut = useCallback(() => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-
+  // AuthContext.tsx
+  const clearAuthData = useCallback(() => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setUser(null);
-
-    navigate('/information');
+    navigate("/information");
   }, [navigate]);
+
+  const signOut = useCallback(() => {
+    clearAuthData();
+
+    navigate("/information");
+  }, [navigate, clearAuthData]);
 
   const decodeToken = (token: string): any => {
     try {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
       const decodedToken = JSON.parse(window.atob(base64));
       return decodedToken;
     } catch (error) {
-      return null; // Token inválido ou erro ao decodificar
+      return null;
     }
   };
 
@@ -122,11 +135,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const verifyExpiredToken = useCallback(() => {
-    const token = String(localStorage.getItem('token'));
+    const token = String(localStorage.getItem("token"));
+  
+    if (!token) {
+      return;
+    }
+  
     const expired = isTokenExpired(token);
-
+  
     if (expired) {
-      toast.error('Token expirado, faça o login novamente', 'Erro');
       signOut();
     }
   }, [isTokenExpired, signOut]);
@@ -147,6 +164,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
 export function useAuth(): AuthContextData {
   const context = useContext(AuthContext);
+
+  useEffect(() => {
+    context.verifyExpiredToken();
+  }, [context, context.verifyExpiredToken]);
 
   return context;
 }

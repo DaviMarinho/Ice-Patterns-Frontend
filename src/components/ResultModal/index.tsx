@@ -17,7 +17,7 @@ import SidebarNavbar from "../SideBarNavBar";
 import "./styles.css";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../config/axios";
-import { BoosterContext } from '../../context/BoosterContext';
+import { BoosterContext } from "../../context/BoosterContext";
 import xpIcon from "../../assets/XP-Icon.svg";
 
 interface ResultModalProps {
@@ -86,7 +86,7 @@ const ResultModal: React.FC<ResultModalProps> = ({
             );
 
             setRewards(rewardsJSX);
-          } else {
+          } else if (percentageCorrect >= 60) {
             const rewardsJSX = (
               <Box>
                 <Text style={{ fontWeight: "bold" }}>Recompensas:</Text>
@@ -108,7 +108,17 @@ const ResultModal: React.FC<ResultModalProps> = ({
     };
 
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, getLastExerciseId, getUserExercise, boosterState]);
+
+  async function postConsumeEnergy(username: string, qtEnergy: number) {
+    const response = await api.post("/receiveTradeItem", {
+      username,
+      qtEnergy,
+      isReceiving: false,
+    });
+    return response.data;
+  }
 
   const percentageCorrect = parseFloat(
     ((correctAnswers / totalQuestions) * 100).toFixed(2)
@@ -151,6 +161,16 @@ const ResultModal: React.FC<ResultModalProps> = ({
       val
     );
 
+    if (percentageCorrect >= 60) {
+      await postConsumeEnergy(userInformations?.username, 1);
+    } else {
+      if (userInformations.qtEnergy > 1) {
+        await postConsumeEnergy(userInformations?.username, 2);
+      } else {
+        await postConsumeEnergy(userInformations?.username, 1);
+      }
+    }
+
     if (
       lastExerciseId &&
       lastExerciseId.exerciseDone === false &&
@@ -169,7 +189,11 @@ const ResultModal: React.FC<ResultModalProps> = ({
       }));
 
       await postSolveExercises(userInformations?.username, exercisesToPost);
-    } else {
+    } else if (
+      lastExerciseId &&
+      lastExerciseId.exerciseDone === true &&
+      percentageCorrect >= 60
+    ) {
       if (boosterState.boosterActive) {
         await postReceiveTradeItem(userInformations?.username, 10);
       } else {
@@ -247,7 +271,7 @@ const ResultModal: React.FC<ResultModalProps> = ({
     });
     return response.data;
   }
-  
+
   return (
     <>
       <SidebarNavbar />

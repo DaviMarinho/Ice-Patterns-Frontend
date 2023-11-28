@@ -5,11 +5,7 @@ import SidebarNavbar from "../../components/SideBarNavBar";
 import { Box, Image, Text, Progress } from "@chakra-ui/react";
 import api from "../../config/axios";
 import { useAuth } from "../../context/AuthContext";
-import useSocket from "../../config/service/socketService";
-import { toast } from "../../utils/toast";
 import cuboGeloIcon from "../../assets/cubo-gelo-navbar.png";
-import { BoosterContext } from "../../context/BoosterContext";
-
 
 interface Mission {
   id: string;
@@ -34,57 +30,6 @@ interface UserMission {
 const QuestsPage: React.FC = () => {
   const [missions, setMissions] = useState<UserMission[]>([]);
   const { user } = useAuth();
-   const { boosterState, boosterDispatch } = React.useContext(BoosterContext);
-
-  const socket = useSocket();
-
-  useEffect(() => {
-    
-    if (!socket) return;
-
-    if (!user || !user.email) {
-      console.error("Email do usuário não disponível.");
-      return;
-    }
-
-    const handleConquista = () => {
-      console.log("Conquista recebida");
-      toast.success("Nova conquista alcançada!");
-    };
-
-    const handleMissao = (dados: any) => {
-      console.log("Missão recebida");
-      toast.success("Você completou uma missão!");
-
-      postReceiveTradeItem(user.username, dados.rewardCube);
-    };
-
-    const handleBoosterDesativar = () => {
-      console.log("Impulsionador desativado");
-      toast.warning("Impulsionador desativado.");
-
-      boosterDispatch({ type: 'DEACTIVATE_BOOSTER' });
-    };
-
-    socket.on("conquista", handleConquista);
-    socket.on("missao", (dados) => handleMissao(dados));
-    socket.on("booster desativar", handleBoosterDesativar);
-
-    return () => {
-      socket.off("conquista", handleConquista);
-      socket.off("missao", handleMissao);
-      socket.off("booster desativar", handleBoosterDesativar);
-    };
-  }, [socket, user, boosterDispatch, boosterState]);
-
-  async function postReceiveTradeItem(username: string, qtCube: number) {
-    const response = await api.post("/receiveTradeItem", {
-      username,
-      qtCube,
-      isReceiving: true,
-    });
-    return response.data;
-  }
 
   useEffect(() => {
     const fetchMissions = async () => {

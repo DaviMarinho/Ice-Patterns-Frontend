@@ -20,7 +20,7 @@ export interface RegisterUserPayload {
 }
 
 export interface CredentialUser {
-  identifier: string;
+  email: string;
   password: string;
 }
 

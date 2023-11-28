@@ -19,4 +19,8 @@ api.interceptors.request.use(
   }
 );
 
+api.defaults.headers.common['Cache-Control'] = 'no-cache';
+api.defaults.headers.common.Pragma = 'no-cache';
+api.defaults.headers.common.Expires = '0';
+
 export default api;
