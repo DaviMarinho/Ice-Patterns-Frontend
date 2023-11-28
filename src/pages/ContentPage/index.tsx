@@ -45,8 +45,8 @@ const SublevelContentPage: React.FC = () => {
     };
 
     const handleBoosterDesativar = () => {
-      console.log("Booster desativado");
-      toast.warning("Booster desativado.");
+      console.log("Impulsionador desativado");
+      toast.warning("Impulsionador desativado.");
 
       boosterDispatch({ type: 'DEACTIVATE_BOOSTER' });
     };

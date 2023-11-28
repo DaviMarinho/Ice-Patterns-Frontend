@@ -44,7 +44,7 @@ const BoosterModal: React.FC<BoosterModalProps> = ({ isOpen, onClose }) => {
       }
     };
   }, [boosterState.boosterActive, boosterState.countdown, boosterDispatch]);
-  
+
   const handleActivate = async () => {
     try {
       if (!user || !user.email) {
@@ -60,8 +60,8 @@ const BoosterModal: React.FC<BoosterModalProps> = ({ isOpen, onClose }) => {
         boosterDispatch({ type: "ACTIVATE_BOOSTER", countdown: 25 });
       }
     } catch (error) {
-      console.error("Erro ao ativar o booster:", error);
-      toast.error("Não foi possível ativar o booster");
+      console.error("Erro ao ativar o impulsionador:", error);
+      toast.error("Não foi possível ativar o impulsionador.");
     }
   };
 
@@ -80,7 +80,7 @@ const BoosterModal: React.FC<BoosterModalProps> = ({ isOpen, onClose }) => {
         <ModalHeader>
           <HStack spacing="2">
             <Image src={fireIcon} />
-            <Text fontSize="lg">Booster</Text>
+            <Text fontSize="lg">Impulsionador</Text>
           </HStack>
         </ModalHeader>
         <ModalCloseButton />
@@ -96,7 +96,7 @@ const BoosterModal: React.FC<BoosterModalProps> = ({ isOpen, onClose }) => {
         <ModalBody>
           <Text>
             Impulsionador que dobra o ganho de cubos por 15 minutos! Ao ativar
-            um Booster, um cronômetro regressivo indicará o tempo restante de
+            um impulsionador, um cronômetro regressivo indicará o tempo restante de
             impulso.
           </Text>
         </ModalBody>

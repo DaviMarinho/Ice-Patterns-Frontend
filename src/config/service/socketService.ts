@@ -5,7 +5,7 @@ let socket: Socket | null = null;
 
 const initializeSocket = (token: string) => {
   if (!socket) {
-    socket = io("https://icepatterns-backend-bd993106e512.herokuapp.com", {
+    socket = io("http://localhost:4001", {
       auth: {
         token: token,
       },

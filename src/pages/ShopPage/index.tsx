@@ -15,12 +15,11 @@ import { BoosterContext } from "../../context/BoosterContext";
 const ShopPage: React.FC = () => {
   const [userInformations, setUserInformations] = useState<any>();
   const { user } = useAuth();
-   const { boosterState, boosterDispatch } = React.useContext(BoosterContext);
-  
+  const { boosterState, boosterDispatch } = React.useContext(BoosterContext);
+
   const socket = useSocket();
 
   useEffect(() => {
-    
     if (!socket) return;
 
     if (!user || !user.email) {
@@ -41,10 +40,10 @@ const ShopPage: React.FC = () => {
     };
 
     const handleBoosterDesativar = () => {
-      console.log("Booster desativado");
-      toast.warning("Booster desativado.");
+      console.log("Impulsionador desativado");
+      toast.warning("Impulsionador desativado.");
 
-      boosterDispatch({ type: 'DEACTIVATE_BOOSTER' });
+      boosterDispatch({ type: "DEACTIVATE_BOOSTER" });
     };
 
     socket.on("conquista", handleConquista);
@@ -129,7 +128,7 @@ const ShopPage: React.FC = () => {
           qtBooster: 1,
           isReceiving: true,
         });
-        toast.success("Booster recebido com sucesso!");
+        toast.success("Impulsionador recebido com sucesso!");
 
         // Atualiza as informações do usuário
         setUserInformations((prev: any) => ({
@@ -149,10 +148,9 @@ const ShopPage: React.FC = () => {
       <Box className="container-shop">
         <Text className="text-title-shop">Loja</Text>
         <Box className="item-shop">
-          <Image src={fireShop}></Image>
+          <Image src={energyShop}></Image>
           <Box className="texts-shop">
             <Text>Energia</Text>
-            <Text className="text-minor">As energias fazem com que...</Text>
           </Box>
           <Box
             style={{ cursor: "pointer" }}
@@ -164,10 +162,9 @@ const ShopPage: React.FC = () => {
           </Box>
         </Box>
         <Box className="item-shop">
-          <Image src={energyShop}></Image>
+          <Image src={fireShop}></Image>
           <Box className="texts-shop">
             <Text>Impulsionadores</Text>
-            <Text className="text-minor">Impulsionadores são itens que...</Text>
           </Box>
           <Box
             style={{ cursor: "pointer" }}
