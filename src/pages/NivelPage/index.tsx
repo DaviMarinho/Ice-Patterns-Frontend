@@ -134,7 +134,7 @@ const NivelPage: React.FC = () => {
                         data-tooltip-content="Exercícios"
                         onClick={() => {
                           if (userInformations?.qtEnergy < 1) {
-                            toast.error("Você não pode entrar sem energia.");
+                            toast.warning("Você precisa de energia para fazer exercícios.");
                           } else {
                             navigate("/exercise/" + sublevel.id);
                           }

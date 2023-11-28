@@ -57,7 +57,7 @@ const BoosterModal: React.FC<BoosterModalProps> = ({ isOpen, onClose }) => {
       });
 
       if (response.status === 200) {
-        boosterDispatch({ type: "ACTIVATE_BOOSTER", countdown: 25 });
+        boosterDispatch({ type: "ACTIVATE_BOOSTER", countdown: 900 });
       }
     } catch (error) {
       console.error("Erro ao ativar o impulsionador:", error);
