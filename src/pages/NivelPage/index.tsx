@@ -21,11 +21,12 @@ const NivelPage: React.FC = () => {
   const [userInformations, setUserInformations] = useState<any>();
   const [sublevels, setSublevels] = useState<any[]>([]);
   const { levelId } = useParams();
-  const { setBoosterActive } = React.useContext(BoosterContext);
+   const { boosterState, boosterDispatch } = React.useContext(BoosterContext);
 
   const socket = useSocket();
 
   useEffect(() => {
+    
     if (!socket) return;
 
     if (!user || !user.email) {
@@ -49,9 +50,8 @@ const NivelPage: React.FC = () => {
       console.log("Booster desativado");
       toast.warning("Booster desativado.");
 
-      setBoosterActive(false);
+      boosterDispatch({ type: 'DEACTIVATE_BOOSTER' });
     };
-
 
     socket.on("conquista", handleConquista);
     socket.on("missao", (dados) => handleMissao(dados));
@@ -62,7 +62,7 @@ const NivelPage: React.FC = () => {
       socket.off("missao", handleMissao);
       socket.off("booster desativar", handleBoosterDesativar);
     };
-  }, [socket, user]);
+  }, [socket, user, boosterDispatch, boosterState]);
 
   async function postReceiveTradeItem(username: string, qtCube: number) {
     const response = await api.post("/receiveTradeItem", {

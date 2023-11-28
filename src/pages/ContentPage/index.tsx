@@ -20,7 +20,7 @@ const SublevelContentPage: React.FC = () => {
   const location = useLocation();
   const [userInformations, setUserInformations] = useState<any>();
   const numLevel = location.state?.levelId;
-  const { setBoosterActive } = React.useContext(BoosterContext);
+  const { boosterDispatch } = React.useContext(BoosterContext);
 
   const socket = useSocket();
 
@@ -48,7 +48,7 @@ const SublevelContentPage: React.FC = () => {
       console.log("Booster desativado");
       toast.warning("Booster desativado.");
 
-      setBoosterActive(false);
+      boosterDispatch({ type: 'DEACTIVATE_BOOSTER' });
     };
 
     socket.on("conquista", handleConquista);

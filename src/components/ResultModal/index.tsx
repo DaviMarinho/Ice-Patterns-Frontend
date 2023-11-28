@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Text,
@@ -17,7 +17,7 @@ import SidebarNavbar from "../SideBarNavBar";
 import "./styles.css";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../config/axios";
-import { BoosterContext } from "../../context/BoosterContext";
+import { BoosterContext } from '../../context/BoosterContext';
 import xpIcon from "../../assets/XP-Icon.svg";
 
 interface ResultModalProps {
@@ -34,7 +34,7 @@ const ResultModal: React.FC<ResultModalProps> = ({
   totalQuestions,
   exercises,
 }) => {
-  const { boosterActive } = React.useContext(BoosterContext);
+  const { boosterState } = useContext(BoosterContext);
   const { user } = useAuth();
   const navigate = useNavigate();
   const [userInformations, setUserInformations] = useState<any>();
@@ -80,7 +80,7 @@ const ResultModal: React.FC<ResultModalProps> = ({
                 )}
                 <Text className="result-rewards">
                   <Image className="icon-result" src={cuboGeloIcon} /> ={" "}
-                  {boosterActive ? "20 x 2" : "20"}
+                  {boosterState.boosterActive ? "20 x 2" : "20"}
                 </Text>
               </Box>
             );
@@ -92,7 +92,7 @@ const ResultModal: React.FC<ResultModalProps> = ({
                 <Text style={{ fontWeight: "bold" }}>Recompensas:</Text>
                 <Text className="result-rewards">
                   <Image className="icon-result" src={cuboGeloIcon} /> ={" "}
-                  {boosterActive ? "5 x 2" : "5"}
+                  {boosterState.boosterActive ? "5 x 2" : "5"}
                 </Text>
               </Box>
             );
@@ -108,7 +108,7 @@ const ResultModal: React.FC<ResultModalProps> = ({
     };
 
     fetchData();
-  }, [user, getLastExerciseId, getUserExercise, boosterActive]);
+  }, [user, getLastExerciseId, getUserExercise, boosterState]);
 
   const percentageCorrect = parseFloat(
     ((correctAnswers / totalQuestions) * 100).toFixed(2)
@@ -151,12 +151,14 @@ const ResultModal: React.FC<ResultModalProps> = ({
       val
     );
 
-    if (lastExerciseId &&
+    if (
+      lastExerciseId &&
       lastExerciseId.exerciseDone === false &&
-      percentageCorrect >= 60) {
+      percentageCorrect >= 60
+    ) {
       await levelUpUser();
 
-      if (boosterActive) {
+      if (boosterState.boosterActive) {
         await postReceiveTradeItem(userInformations?.username, 40);
       } else {
         await postReceiveTradeItem(userInformations?.username, 20);
@@ -168,7 +170,7 @@ const ResultModal: React.FC<ResultModalProps> = ({
 
       await postSolveExercises(userInformations?.username, exercisesToPost);
     } else {
-      if (boosterActive) {
+      if (boosterState.boosterActive) {
         await postReceiveTradeItem(userInformations?.username, 10);
       } else {
         await postReceiveTradeItem(userInformations?.username, 5);
