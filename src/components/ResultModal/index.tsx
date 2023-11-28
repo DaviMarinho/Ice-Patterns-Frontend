@@ -40,6 +40,11 @@ const ResultModal: React.FC<ResultModalProps> = ({
   const [userInformations, setUserInformations] = useState<any>();
   const [rewards, setRewards] = useState<React.ReactNode | null>(null);
 
+
+  const percentageCorrect = parseFloat(
+    ((correctAnswers / totalQuestions) * 100).toFixed(2)
+  );
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -109,7 +114,7 @@ const ResultModal: React.FC<ResultModalProps> = ({
 
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, boosterState]);
+  }, [user, percentageCorrect, boosterState]);
 
   async function postConsumeEnergy(username: string, qtEnergy: number) {
     const response = await api.post("/receiveTradeItem", {
@@ -120,9 +125,6 @@ const ResultModal: React.FC<ResultModalProps> = ({
     return response.data;
   }
 
-  const percentageCorrect = parseFloat(
-    ((correctAnswers / totalQuestions) * 100).toFixed(2)
-  );
 
   function getLastExerciseId(): string {
     if (exercises.length === 0) {
@@ -203,32 +205,6 @@ const ResultModal: React.FC<ResultModalProps> = ({
 
     navigate("/");
   };
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        if (!user || !user.email) {
-          console.error("Email do usuário não disponível.");
-          return;
-        }
-
-        const response = await api.get(
-          `get-user?userEmail=${encodeURIComponent(user.email)}`
-        );
-        const fetchedUser = response.data;
-
-        if (fetchedUser) {
-          setUserInformations(fetchedUser);
-        } else {
-          console.error("Usuário não encontrado na resposta da API.");
-        }
-      } catch (error) {
-        console.error("Erro ao buscar usuário:", error);
-      }
-    };
-
-    fetchUser();
-  }, [user]);
 
   const levelUpUser = async () => {
     let xp = 0;
