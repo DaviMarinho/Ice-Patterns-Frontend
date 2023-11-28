@@ -1,17 +1,10 @@
 // ExercisePageContent.tsx
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./styles.css";
 import { useNavigate } from "react-router-dom";
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
   Box,
-  Text,
   Button,
 } from "@chakra-ui/react";
 import ResultModal from "../ResultModal";

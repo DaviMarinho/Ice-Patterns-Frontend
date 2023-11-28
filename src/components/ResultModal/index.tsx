@@ -109,7 +109,7 @@ const ResultModal: React.FC<ResultModalProps> = ({
 
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, getLastExerciseId, getUserExercise, boosterState]);
+  }, [user, boosterState]);
 
   async function postConsumeEnergy(username: string, qtEnergy: number) {
     const response = await api.post("/receiveTradeItem", {
