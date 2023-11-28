@@ -85,7 +85,7 @@ const ResultModal: React.FC<ResultModalProps> = ({
                 )}
                 <Text className="result-rewards">
                   <Image className="icon-result" src={cuboGeloIcon} /> ={" "}
-                  {boosterState.boosterActive ? "20 x 2" : "20"}
+                  {boosterState.boosterActive ? "50 x 2" : "50"}
                 </Text>
               </Box>
             );
@@ -181,9 +181,9 @@ const ResultModal: React.FC<ResultModalProps> = ({
       await levelUpUser();
 
       if (boosterState.boosterActive) {
-        await postReceiveTradeItem(userInformations?.username, 40);
+        await postReceiveTradeItem(userInformations?.username, 100);
       } else {
-        await postReceiveTradeItem(userInformations?.username, 20);
+        await postReceiveTradeItem(userInformations?.username, 50);
       }
 
       const exercisesToPost = exercises.map((exercise) => ({
