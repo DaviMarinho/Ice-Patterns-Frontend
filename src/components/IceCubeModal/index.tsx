@@ -42,9 +42,6 @@ const CuboGeloModal: React.FC<CuboGeloModalProps> = ({ isOpen, onClose }) => {
           </Text>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={onClose}>
-            Fechar
-          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

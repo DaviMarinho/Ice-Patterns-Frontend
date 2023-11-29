@@ -99,9 +99,6 @@ const XpModal: React.FC<XpModalProps> = ({ isOpen, onClose }) => {
           <Text>Você possui {userXP?.qtXpTotal} pontos de experiência no nível {userXP?.sublevel.numLevel}.</Text>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={onClose}>
-            Fechar
-          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

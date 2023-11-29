@@ -49,9 +49,6 @@ const EnergiaModal: React.FC<EnergiaModalProps> = ({
           <Divider my={4} />
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={onClose}>
-            Fechar
-          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
