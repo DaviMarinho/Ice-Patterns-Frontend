@@ -6,7 +6,6 @@ import PerfilPage from "../../pages/PerfilPage";
 import QuestsPage from "../../pages/QuestsPage";
 import ShopPage from "../../pages/ShopPage";
 import ExercicesPage from "../../pages/ExercisesPage";
-import ResultPage from "../../components/ResultModal";
 import ContentPage from "../../pages/ContentPage";
 import NivelPage from "../../pages/NivelPage";
 

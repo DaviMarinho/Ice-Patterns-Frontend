@@ -5,13 +5,14 @@ import { Box, Image, Text } from "@chakra-ui/react";
 import iceCubeShop from "../../assets/cubo-gelo-transparente-shop.png";
 import energyShop from "../../assets/energia-cheia-shop.png";
 import fireShop from "../../assets/fire-solid-shop.png";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../config/axios";
 import { toast } from "../../utils/toast";
+import UserInformationContext from '../../context/UserContext';
 
 const ShopPage: React.FC = () => {
-  const [userInformations, setUserInformations] = useState<any>();
+  const { userInformations, setUserInformations } = useContext(UserInformationContext);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -42,6 +43,10 @@ const ShopPage: React.FC = () => {
 
   const receiveTradeItem = async (qtCubo?: number) => {
     try {
+      if(!userInformations){
+        return;
+      }
+
       if (qtCubo === 150 && userInformations.qtEnergy < 5) {
         await api.post("/receiveTradeItem", {
           username: userInformations.username,
@@ -76,14 +81,11 @@ const ShopPage: React.FC = () => {
           qtBooster: 1,
           isReceiving: true,
         });
-        toast.success("Impulsionador recebido com sucesso!");
-
-        // Atualiza as informações do usuário
-        setUserInformations((prev: any) => ({
-          ...prev,
-          qtCube: prev.qtCube - qtCubo,
-          qtBooster: prev.qtBooster + 1,
+        setUserInformations((prevState: any) => ({
+          ...prevState,
+          qtBooster: prevState.qtBooster + 1,
         }));
+        toast.success("Impulsionador recebido com sucesso!");
       }
     } catch (error: any) {
       toast.error(error.response.data.error);

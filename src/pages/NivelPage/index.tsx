@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Box, Text, Image } from "@chakra-ui/react";
 import SidebarNavbar from "../../components/SideBarNavBar";
 import api from "../../config/axios";
@@ -12,15 +12,22 @@ import cadeado from "../../assets/cadeado.png";
 import { toast } from "../../utils/toast";
 import { useParams } from "react-router-dom";
 import { InfoIcon } from "@chakra-ui/icons";
+import UserInformationContext from "../../context/UserContext";
 
 const NivelPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [userInformations, setUserInformations] = useState<any>();
+  const { userInformations, setUserInformations } = useContext(
+    UserInformationContext
+  );
   const [sublevels, setSublevels] = useState<any[]>([]);
   const { levelId } = useParams();
 
   useEffect(() => {
+    if (!userInformations) {
+      return;
+    }
+
     const fetchUser = async () => {
       try {
         if (!user || !user.email) {
@@ -63,7 +70,7 @@ const NivelPage: React.FC = () => {
 
   useEffect(() => {
     fetchSublevels();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [levelId]);
 
   return (
@@ -91,7 +98,7 @@ const NivelPage: React.FC = () => {
             />
             <button
               className="button-header"
-              disabled={userInformations?.sublevel?.numSublevel < 4}
+              disabled={false || (userInformations && userInformations.sublevel && userInformations.sublevel.numSublevel < 4)}
               onClick={() =>
                 userInformations?.sublevel?.numSublevel === 4 &&
                 navigate("/exercise/" + userInformations?.sublevel.id)
@@ -134,7 +141,9 @@ const NivelPage: React.FC = () => {
                         data-tooltip-content="Exercícios"
                         onClick={() => {
                           if (userInformations?.qtEnergy < 1) {
-                            toast.warning("Você precisa de energia para fazer exercícios.");
+                            toast.warning(
+                              "Você precisa de energia para fazer exercícios."
+                            );
                           } else {
                             navigate("/exercise/" + sublevel.id);
                           }

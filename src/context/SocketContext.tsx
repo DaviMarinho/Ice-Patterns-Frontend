@@ -24,9 +24,11 @@ export const SocketProvider: React.FC<React.PropsWithChildren<{}>> = ({
     if (socket) {
       console.log("Configurando ouvintes de eventos...");
 
-      const handleConquista = () => {
+      const handleConquista = (dados: string) => {
         console.log("Conquista recebida");
         toast.success("Nova conquista alcançada!");
+
+        postReceiveAchievement(user.username, dados);
       };
 
       const handleMissao = (dados: any) => {
@@ -34,7 +36,7 @@ export const SocketProvider: React.FC<React.PropsWithChildren<{}>> = ({
         toast.success("Você completou uma missão!");
         console.log(dados.cubeReward);
       
-        postReceiveTradeItem(user?.username, dados.cubeReward);
+        postReceiveTradeItem(user.username, dados.cubeReward);
       };
 
       const handleBoosterDesativar = () => {
@@ -42,6 +44,10 @@ export const SocketProvider: React.FC<React.PropsWithChildren<{}>> = ({
         toast.warning("Impulsionador desativado.");
 
         boosterDispatch({ type: "DEACTIVATE_BOOSTER" });
+      };
+
+      const handleDesafio = () => {
+        toast.success("Desafio liberado. Complete-o para subir de nível!");
       };
 
       socket.on("conquista", handleConquista);
@@ -52,6 +58,7 @@ export const SocketProvider: React.FC<React.PropsWithChildren<{}>> = ({
         socket.off("conquista", handleConquista);
         socket.off("missao", handleMissao);
         socket.off("booster desativar", handleBoosterDesativar);
+        socket.off("desafio", handleDesafio);
       };
     }
   }, [socket, user, boosterDispatch]);
@@ -66,6 +73,18 @@ export const SocketProvider: React.FC<React.PropsWithChildren<{}>> = ({
       return response.data;
     } catch (error) {
       console.error("Erro ao processar trade item:", error);
+    }
+  }
+
+  async function postReceiveAchievement(username: string, idAchievement: string) {
+    try {
+      const response = await api.post("/receiveAchievement", {
+        username,
+        idAchievement,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao receber conquista", error);
     }
   }
 

@@ -10,6 +10,7 @@ class Toast {
       status: 'success',
       duration: 5000,
       isClosable: true,
+      position: 'top',
     });
   }
 
@@ -20,6 +21,7 @@ class Toast {
       status: 'error',
       duration: 5000,
       isClosable: true,
+      position: 'top',
     });
   }
 
@@ -30,6 +32,7 @@ class Toast {
       status: 'warning',
       duration: 5000,
       isClosable: true,
+      position: 'top',
     });
   }
 }

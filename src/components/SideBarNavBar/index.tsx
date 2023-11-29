@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Box, Text, HStack, Progress, Image } from "@chakra-ui/react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./styles.css";
@@ -18,24 +18,7 @@ import XpModal from "../ExpModal";
 import EnergiaModal from "../EnergyModal";
 import CuboGeloModal from "../IceCubeModal";
 import api from "../../config/axios";
-
-interface Sublevel {
-  id: string;
-  numSublevel: number;
-  numLevel: number;
-  name: string;
-}
-interface UserInformation {
-  username: string;
-  email: string;
-  name: string;
-  qtBooster: number;
-  qtEnergy: number;
-  qtCube: number;
-  qtXpOnLevel: number;
-  qtXpTotal: number;
-  sublevel: Sublevel;
-}
+import UserInformationContext from '../../context/UserContext';
 
 const SidebarNavbar = () => {
   const { signOut, user } = useAuth();
@@ -47,34 +30,39 @@ const SidebarNavbar = () => {
   const [isEnergiaModalOpen, setIsEnergiaModalOpen] = useState(false);
   const [isCuboGeloModalOpen, setIsCuboGeloModalOpen] = useState(false);
 
-  const [userInformations, setUserInformations] = useState<UserInformation>();
+  const { userInformations, setUserInformations } = useContext(UserInformationContext);
+  const [shouldFetchUser, setShouldFetchUser] = useState(true);
 
   useEffect(() => {
-    fetchUser();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
-
-  const fetchUser = async () => {
-    try {
-      if (!user || !user.email) {
-        console.error("Email do usuário não disponível.");
-        return;
+    const fetchUser = async () => {
+      try {
+        if (!user || !user.email) {
+          console.error("Email do usuário não disponível.");
+          return;
+        }
+  
+        const response = await api.get(
+          `get-user?userEmail=${encodeURIComponent(user.email)}`
+        );
+        const fetchedUser = response.data;
+  
+        if (fetchedUser) {
+          setUserInformations(fetchedUser);
+        } else {
+          console.error("Usuário não encontrado na resposta da API.");
+        }
+      } catch (error) {
+        console.error("Erro ao buscar usuário:", error);
       }
-
-      const response = await api.get(
-        `get-user?userEmail=${encodeURIComponent(user.email)}`
-      );
-      const fetchedUser = response.data;
-
-      if (fetchedUser) {
-        setUserInformations(fetchedUser);
-      } else {
-        console.error("Usuário não encontrado na resposta da API.");
-      }
-    } catch (error) {
-      console.error("Erro ao buscar usuário:", error);
-    }
-  };
+      setShouldFetchUser(false);
+    };
+  
+      fetchUser();
+  }, [user, shouldFetchUser]);
+  
+  useEffect(() => {
+    setShouldFetchUser(true);
+  }, [userInformations?.qtBooster, userInformations?.qtEnergy, userInformations?.qtCube]);
 
   return (
     <>

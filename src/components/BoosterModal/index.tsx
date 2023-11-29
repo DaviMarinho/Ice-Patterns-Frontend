@@ -3,6 +3,8 @@ import {
   Box,
   Button,
   HStack,
+  Text,
+  Image,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -10,8 +12,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Text,
-  Image,
 } from "@chakra-ui/react";
 import fireIcon from "../../assets/fire-navbar.png";
 import { BoosterContext } from "../../context/BoosterContext";
@@ -19,6 +19,7 @@ import api from "../../config/axios";
 import "./styles.css";
 import { toast } from "../../utils/toast";
 import { useAuth } from "../../context/AuthContext";
+import UserInformationContext from "../../context/UserContext";
 
 interface BoosterModalProps {
   isOpen: boolean;
@@ -27,6 +28,7 @@ interface BoosterModalProps {
 
 const BoosterModal: React.FC<BoosterModalProps> = ({ isOpen, onClose }) => {
   const { boosterState, boosterDispatch } = useContext(BoosterContext);
+  const { userInformations, setUserInformations } = useContext(UserInformationContext);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -55,6 +57,10 @@ const BoosterModal: React.FC<BoosterModalProps> = ({ isOpen, onClose }) => {
       const response = await api.post("/activateBooster", {
         username: user.username,
       });
+      setUserInformations((prevState: any) => ({
+        ...prevState,
+        qtBooster: prevState.qtBooster - 1,
+      }));
 
       if (response.status === 200) {
         boosterDispatch({ type: "ACTIVATE_BOOSTER", countdown: 900 });

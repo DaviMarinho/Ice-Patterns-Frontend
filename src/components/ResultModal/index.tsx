@@ -19,6 +19,7 @@ import { useAuth } from "../../context/AuthContext";
 import api from "../../config/axios";
 import { BoosterContext } from "../../context/BoosterContext";
 import xpIcon from "../../assets/XP-Icon.svg";
+import UserInformationContext from '../../context/UserContext';
 
 interface ResultModalProps {
   isOpen: boolean;
@@ -37,7 +38,7 @@ const ResultModal: React.FC<ResultModalProps> = ({
   const { boosterState } = useContext(BoosterContext);
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [userInformations, setUserInformations] = useState<any>();
+  const { userInformations, setUserInformations } = useContext(UserInformationContext);
   const [rewards, setRewards] = useState<React.ReactNode | null>(null);
 
 
@@ -46,6 +47,10 @@ const ResultModal: React.FC<ResultModalProps> = ({
   );
 
   useEffect(() => {
+    if(!userInformations){
+      return;
+    }
+
     const fetchData = async () => {
       try {
         if (!user || !user.email) {
@@ -156,20 +161,24 @@ const ResultModal: React.FC<ResultModalProps> = ({
   }
 
   const handleBackToHome = async () => {
+    if(!userInformations){
+      return;
+    }
+
     const val = getLastExerciseId();
 
     const lastExerciseId = await getUserExercise(
-      userInformations?.username,
+      userInformations.username,
       val
     );
 
     if (percentageCorrect >= 60) {
-      await postConsumeEnergy(userInformations?.username, 1);
+      await postConsumeEnergy(userInformations.username, 1);
     } else {
       if (userInformations.qtEnergy > 1) {
-        await postConsumeEnergy(userInformations?.username, 2);
+        await postConsumeEnergy(userInformations.username, 2);
       } else {
-        await postConsumeEnergy(userInformations?.username, 1);
+        await postConsumeEnergy(userInformations.username, 1);
       }
     }
 
@@ -181,25 +190,25 @@ const ResultModal: React.FC<ResultModalProps> = ({
       await levelUpUser();
 
       if (boosterState.boosterActive) {
-        await postReceiveTradeItem(userInformations?.username, 100);
+        await postReceiveTradeItem(userInformations.username, 100);
       } else {
-        await postReceiveTradeItem(userInformations?.username, 50);
+        await postReceiveTradeItem(userInformations.username, 50);
       }
 
       const exercisesToPost = exercises.map((exercise) => ({
         exerciseId: exercise.exercise.id,
       }));
 
-      await postSolveExercises(userInformations?.username, exercisesToPost);
+      await postSolveExercises(userInformations.username, exercisesToPost);
     } else if (
       lastExerciseId &&
       lastExerciseId.exerciseDone === true &&
       percentageCorrect >= 60
     ) {
       if (boosterState.boosterActive) {
-        await postReceiveTradeItem(userInformations?.username, 10);
+        await postReceiveTradeItem(userInformations.username, 10);
       } else {
-        await postReceiveTradeItem(userInformations?.username, 5);
+        await postReceiveTradeItem(userInformations.username, 5);
       }
     }
 
@@ -207,12 +216,16 @@ const ResultModal: React.FC<ResultModalProps> = ({
   };
 
   const levelUpUser = async () => {
+    if(!userInformations){
+      return;
+    }
+
     let xp = 0;
-    if (userInformations.sublevel.numSubleve !== 4) {
+    if (userInformations.sublevel.numSublevel !== 4) {
       xp = 30;
       try {
         await api.post(`changeXpPoints`, {
-          username: userInformations?.username,
+          username: userInformations.username,
           qtXp: xp,
         });
       } catch (error) {
@@ -222,7 +235,7 @@ const ResultModal: React.FC<ResultModalProps> = ({
       xp = 10;
       try {
         await api.post(`changeXpPoints`, {
-          username: userInformations?.username,
+          username: userInformations.username,
           qtXp: xp,
         });
       } catch (error) {
@@ -232,7 +245,7 @@ const ResultModal: React.FC<ResultModalProps> = ({
 
     try {
       await api.post(`levelUp`, {
-        username: userInformations?.username,
+        username: userInformations.username,
       });
     } catch (error) {
       console.error("Erro ao mudar a quantidade de experiência:", error);

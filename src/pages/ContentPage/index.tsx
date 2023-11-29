@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Box, Text, Button, Progress, Container } from "@chakra-ui/react";
 import { useNavigate, useLocation } from "react-router-dom";
 import SidebarNavbar from "../../components/SideBarNavBar";
@@ -6,6 +6,7 @@ import api from "../../config/axios";
 import "./styles.css";
 import { useAuth } from "../../context/AuthContext";
 import { useParams } from "react-router-dom";
+import UserInformationContext from '../../context/UserContext';
 
 const SublevelContentPage: React.FC = () => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const SublevelContentPage: React.FC = () => {
   const { user } = useAuth();
   const { level } = useParams();
   const location = useLocation();
-  const [userInformations, setUserInformations] = useState<any>();
+  const { userInformations, setUserInformations } = useContext(UserInformationContext);
   const numLevel = location.state?.levelId;
 
   useEffect(() => {
