@@ -73,11 +73,14 @@ const HomePage: React.FC = () => {
                   className="textLock"
                   onClick={() => navigate(`/nivel/${nivel}`)}
                 >
-                  <Text className="textNivel">{`Nível ${nivel}`}</Text>
                   {userInformations?.sublevel?.numLevel !== undefined &&
                     userInformations.sublevel.numLevel < nivel && (
-                      <Image src={cadeado} />
-                    )}
+                      <Image src={cadeado}/>
+                      )}
+                  <button className="button-nivel-pequeno" onClick={() => navigate(`/nivel/${userInformations?.sublevel.numLevel}`)}>
+                    <Text className="textNivel">{`Nível ${nivel}`}</Text>
+                    {/* {`Nível ${nivel}`} */}
+                  </button>
                 </Box>
                 <div className="linha"></div>
               </Box>
