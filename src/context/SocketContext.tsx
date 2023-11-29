@@ -47,18 +47,27 @@ export const SocketProvider: React.FC<React.PropsWithChildren<{}>> = ({
       };
 
       const handleDesafio = () => {
-        toast.success("Desafio liberado. Complete-o para subir de nível!");
+        console.log("Desafio liberado");
+        toast.success("Desafio do nível liberado. Complete-o para subir de nível!");
+      };
+
+      const handleMissaoNova = () => {
+        console.log("Nova missão liberada");
+        toast.success("Nova missão liberada!");
       };
 
       socket.on("conquista", handleConquista);
       socket.on("missao", handleMissao);
       socket.on("booster desativar", handleBoosterDesativar);
+      socket.on("desafio", handleDesafio);
+      socket.on("missao nova", handleMissaoNova);
 
       return () => {
         socket.off("conquista", handleConquista);
         socket.off("missao", handleMissao);
         socket.off("booster desativar", handleBoosterDesativar);
         socket.off("desafio", handleDesafio);
+        socket.off("missao nova", handleMissaoNova);
       };
     }
   }, [socket, user, boosterDispatch]);
