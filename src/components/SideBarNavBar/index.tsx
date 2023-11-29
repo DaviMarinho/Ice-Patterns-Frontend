@@ -99,7 +99,7 @@ const SidebarNavbar = () => {
 
       <Box className="navbar">
         <Box
-          className="progressBarContent clickable"
+          className="progressBarContent"
           onClick={() => setIsXpModalOpen(true)}
         >
           <Box className="progressBarTexts">
