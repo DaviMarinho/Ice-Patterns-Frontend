@@ -98,6 +98,9 @@ const NivelPage: React.FC = () => {
             />
             <button
               className="button-header"
+              data-tooltip-id="my-tooltip"
+              data-tooltip-content={`Complete o desafio para subir para o nível ${userInformations?.sublevel?.numLevel != null ? userInformations.sublevel.numLevel + 1 : "Indisponível"}`}
+              // data-tooltip-content={`Complete o desafio para subir para o próximo nível`}
               disabled={false || (userInformations && userInformations.sublevel && userInformations.sublevel.numSublevel < 4)}
               onClick={() =>
                 userInformations?.sublevel?.numSublevel === 4 &&
