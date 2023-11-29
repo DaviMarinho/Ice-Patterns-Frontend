@@ -87,7 +87,7 @@ const HomePage: React.FC = () => {
 
         <div className="button-container">
           <button className="button-nivel" onClick={() => navigate(`/nivel/${userInformations?.sublevel.numLevel}`)}>
-            Nível
+            Vamos lá!
           </button>
         </div>
       </Box>

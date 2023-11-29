@@ -89,6 +89,8 @@
   margin: 20px;
   margin-left: 50px;
   flex-direction: column;
+  cursor: pointer;
+  padding: 12px;
 }
 
 .progressBarTexts {

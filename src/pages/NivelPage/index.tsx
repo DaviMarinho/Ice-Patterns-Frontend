@@ -94,7 +94,7 @@ const NivelPage: React.FC = () => {
               boxSize={8} // Ajuste o tamanho conforme necessário
               cursor="pointer"
               data-tooltip-id="my-tooltip"
-              data-tooltip-content="Os conteúdos e exercícios são baseados em referências como Gamma et al e Refactoring Guru"
+              data-tooltip-content="Os conteúdos e exercícios são baseados em referências como Gamma et al (1995) e Refactoring Guru"
             />
             <button
               className="button-header"
