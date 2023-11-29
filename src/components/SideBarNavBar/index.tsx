@@ -19,6 +19,7 @@ import EnergiaModal from "../EnergyModal";
 import CuboGeloModal from "../IceCubeModal";
 import api from "../../config/axios";
 import UserInformationContext from '../../context/UserContext';
+import { Tooltip } from "react-tooltip";
 
 const SidebarNavbar = () => {
   const { signOut, user } = useAuth();
@@ -98,9 +99,12 @@ const SidebarNavbar = () => {
       </Box>
 
       <Box className="navbar">
+      <Tooltip id="navbar-tooltip" />
         <Box
           className="progressBarContent"
           onClick={() => setIsXpModalOpen(true)}
+          data-tooltip-id="navbar-tooltip"
+          data-tooltip-content="Seu progresso"
         >
           <Box className="progressBarTexts">
             <Text fontSize="lg">
@@ -120,13 +124,23 @@ const SidebarNavbar = () => {
           />
         </Box>
         <Box className="icons">
-          <HStack spacing="2">
+          <HStack 
+              spacing="2"
+              className="clickable"
+              data-tooltip-id="navbar-tooltip"
+              data-tooltip-content="Impulsionadores">
             <Image src={fireIcon} onClick={() => setIsBoosterModalOpen(true)} />
             <Text fontSize="lg">{userInformations?.qtBooster}</Text>
           </HStack>
-          <HStack spacing="2" onClick={() => setIsEnergiaModalOpen(true)}>
+          <HStack 
+            spacing="2"
+            className="clickable"
+            onClick={() => setIsEnergiaModalOpen(true)}
+            data-tooltip-id="navbar-tooltip"
+            data-tooltip-content="Energias">
             {[...Array(userInformations?.qtEnergy || 0)].map((_, index) => (
-              <Image key={index} src={energiaCheiaIcon} />
+              <Image 
+                key={index} src={energiaCheiaIcon} />
             ))}
             {[...Array(5 - (userInformations?.qtEnergy || 0))].map(
               (_, index) => (
@@ -134,7 +148,12 @@ const SidebarNavbar = () => {
               )
             )}
           </HStack>
-          <HStack spacing="2" onClick={() => setIsCuboGeloModalOpen(true)}>
+          <HStack 
+              spacing="2"
+              className="clickable"
+              onClick={() => setIsCuboGeloModalOpen(true)} 
+              data-tooltip-id="navbar-tooltip"
+              data-tooltip-content="Cubos de gelo">
             <Image src={cuboGeloIcon} />
             <Text fontSize="lg">{userInformations?.qtCube}</Text>
           </HStack>
