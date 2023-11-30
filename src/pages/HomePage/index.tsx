@@ -5,62 +5,30 @@ import { Box, Image, Text, Spinner } from "@chakra-ui/react";
 import icebergFull from "../../assets/iceberg-full.png";
 import cadeado from "../../assets/cadeado.png";
 import { useAuth } from "../../context/AuthContext";
-import api from "../../config/axios";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Tooltip } from "react-tooltip";
-interface Sublevel {
-  id: string;
-  numSublevel: number;
-  numLevel: number;
-  name: string;
-}
-
-interface UserInformation {
-  username: string;
-  email: string;
-  name: string;
-  qtBooster: number;
-  qtEnergy: number;
-  qtCube: number;
-  qtXpOnLevel: number;
-  qtXpTotal: number;
-  sublevel: Sublevel;
-}
+import UserInformationContext from "../../context/UserContext";
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [userInformations, setUserInformations] = useState<UserInformation>();
+  const { userInformations } = useContext(
+    UserInformationContext
+  );
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
-      setIsLoading(true);
-      try {
-        if (!user || !user.email) {
-          console.error("Email do usuário não disponível.");
-          return;
-        }
-
-        const response = await api.get(
-          `get-user?userEmail=${encodeURIComponent(user.email)}`
-        );
-        const fetchedUser = response.data;
-
-        if (fetchedUser) {
-          setUserInformations(fetchedUser);
-        } else {
-          console.error("Usuário não encontrado na resposta da API.");
-        }
-      } catch (error) {
-        console.error("Erro ao buscar usuário:", error);
+      if(!userInformations){
+        setIsLoading(true);
       }
+      
       setIsLoading(false);
     };
 
     fetchUser();
-  }, [user]);
+  }, [user, userInformations]);
 
   if (isLoading) {
     return (

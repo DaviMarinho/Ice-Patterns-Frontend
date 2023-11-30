@@ -3,8 +3,6 @@ import {
   Box,
   Text,
   Image,
-  SkeletonCircle,
-  SkeletonText,
   Skeleton,
   Stack,
 } from "@chakra-ui/react";
@@ -21,7 +19,6 @@ import { toast } from "../../utils/toast";
 import { useParams } from "react-router-dom";
 import { InfoIcon } from "@chakra-ui/icons";
 import UserInformationContext from "../../context/UserContext";
-import { Spinner } from "@chakra-ui/react";
 
 const NivelPage: React.FC = () => {
   const navigate = useNavigate();

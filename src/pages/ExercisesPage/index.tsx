@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Text, Progress } from "@chakra-ui/react";
+import { Box, Text, Progress, Skeleton, Stack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import SidebarNavbar from "../../components/SideBarNavBar";
 import api from "../../config/axios";
@@ -33,12 +33,14 @@ const ExercicesPage: React.FC = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(currentExerciseIndex);
   const [totalPages, setTotalPages] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { level } = useParams();
 
   useEffect(() => {
     if (level) {
       const fetchSublevelContents = async () => {
+        setIsLoading(true);
         try {
           const response = await api.get(
             `getSublevelExercises?sublevelId=${level}`
@@ -49,6 +51,7 @@ const ExercicesPage: React.FC = () => {
         } catch (error) {
           console.error("Erro ao buscar conteúdo do subnível:", error);
         }
+        setIsLoading(false);
       };
 
       fetchSublevelContents();
@@ -74,6 +77,40 @@ const ExercicesPage: React.FC = () => {
       setCurrentPage(newPage);
     }
   };
+
+  if (isLoading) {
+    return (
+      <>
+        <SidebarNavbar />
+        <Box
+          height="100vh"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Box
+            width="650px"
+            height="600px"
+            padding="10px"
+            bg="white"
+            borderRadius="10px"
+            display="flex"
+              justifyContent="center"
+              alignItems="center"
+          >
+            <Stack
+              padding="10px"
+              width="600px"
+              justifyContent="center"
+            >
+              <Skeleton height="30px" width="800px" borderRadius="10px" />
+              <Skeleton  height="605px" width="800px" borderRadius="10px" />
+            </Stack>
+          </Box>
+        </Box>
+      </>
+    );
+  }
 
   return (
     <>

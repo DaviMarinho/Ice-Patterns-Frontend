@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext } from "react";
 import {
   Box,
-  Button,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -14,51 +13,15 @@ import {
   Divider,
 } from "@chakra-ui/react";
 import xpIcon from "../../assets/XP-Icon.svg";
-import api from "../../config/axios";
-import { useAuth } from "../../context/AuthContext";
+import UserInformationContext from "../../context/UserContext";
 
 interface XpModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-interface UserXP {
-  username: string;
-  email: string;
-  qtBooster: number;
-  qtEnergy: number;
-  qtCube: number;
-  qtXpOnLevel: number;
-  qtXpTotal: number;
-  sublevel: {
-    id: number;
-    numSublevel: number;
-    numLevel: number;
-    name: string;
-  };
-}
-
 const XpModal: React.FC<XpModalProps> = ({ isOpen, onClose }) => {
-  const { user } = useAuth();
-  const [userXP, setUserXP] = useState<UserXP | null>(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await api.get<UserXP>(
-          `get-user?userEmail=${user?.email}`
-        );
-        const fetchedUser = response.data;
-        setUserXP(fetchedUser);
-      } catch (error) {
-        console.error("Erro ao buscar User:", error);
-      }
-    };
-
-    if (user?.email) {
-      fetchUser();
-    }
-  }, [user?.email]);
+  const { userInformations } = useContext(UserInformationContext);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -96,7 +59,7 @@ const XpModal: React.FC<XpModalProps> = ({ isOpen, onClose }) => {
             para subir de nível.
           </Text>
           <Divider my={4} />
-          <Text>Você possui {userXP?.qtXpOnLevel} pontos de experiência no nível {userXP?.sublevel.numLevel}.</Text>
+          <Text>Você possui {userInformations?.qtXpOnLevel} pontos de experiência no nível {userInformations?.sublevel.numLevel}.</Text>
         </ModalBody>
         <ModalFooter>
         </ModalFooter>

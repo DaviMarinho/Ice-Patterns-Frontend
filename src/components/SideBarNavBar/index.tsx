@@ -61,7 +61,7 @@ const SidebarNavbar = () => {
     };
 
     fetchUser();
-  }, [user, shouldFetchUser]);
+  }, [user, shouldFetchUser, setUserInformations]);
 
   useEffect(() => {
     setShouldFetchUser(true);

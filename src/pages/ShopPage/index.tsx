@@ -5,41 +5,13 @@ import { Box, Image, Text } from "@chakra-ui/react";
 import iceCubeShop from "../../assets/cubo-gelo-transparente-shop.png";
 import energyShop from "../../assets/energia-cheia-shop.png";
 import fireShop from "../../assets/fire-solid-shop.png";
-import { useContext, useEffect, useState } from "react";
-import { useAuth } from "../../context/AuthContext";
+import { useContext } from "react";
 import api from "../../config/axios";
 import { toast } from "../../utils/toast";
 import UserInformationContext from '../../context/UserContext';
 
 const ShopPage: React.FC = () => {
   const { userInformations, setUserInformations } = useContext(UserInformationContext);
-  const { user } = useAuth();
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        if (!user || !user.email) {
-          console.error("Email do usuário não disponível.");
-          return;
-        }
-
-        const response = await api.get(
-          `get-user?userEmail=${encodeURIComponent(user.email)}`
-        );
-        const fetchedUser = response.data;
-
-        if (fetchedUser) {
-          setUserInformations(fetchedUser);
-        } else {
-          console.error("Usuário não encontrado na resposta da API.");
-        }
-      } catch (error) {
-        console.error("Erro ao buscar usuário:", error);
-      }
-    };
-
-    fetchUser();
-  }, [user]);
 
   const receiveTradeItem = async (qtCubo?: number) => {
     try {

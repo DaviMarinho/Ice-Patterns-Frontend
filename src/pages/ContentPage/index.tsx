@@ -1,53 +1,35 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Box, Text, Button, Progress, Container } from "@chakra-ui/react";
+import {
+  Box,
+  Text,
+  Button,
+  Progress,
+  Container,
+  Skeleton,
+  Stack,
+} from "@chakra-ui/react";
 import { useNavigate, useLocation } from "react-router-dom";
 import SidebarNavbar from "../../components/SideBarNavBar";
 import api from "../../config/axios";
 import "./styles.css";
-import { useAuth } from "../../context/AuthContext";
 import { useParams } from "react-router-dom";
-import UserInformationContext from '../../context/UserContext';
+import UserInformationContext from "../../context/UserContext";
 
 const SublevelContentPage: React.FC = () => {
   const navigate = useNavigate();
   const [sublevelContents, setSublevelContents] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const { user } = useAuth();
+  const [totalPages, setTotalPages] = useState(0); 
   const { level } = useParams();
   const location = useLocation();
-  const { userInformations, setUserInformations } = useContext(UserInformationContext);
+  const { userInformations } = useContext(UserInformationContext);
+  const [isLoading, setIsLoading] = useState(true);
   const numLevel = location.state?.levelId;
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        if (!user || !user.email) {
-          console.error("Email do usuário não disponível.");
-          return;
-        }
-
-        const response = await api.get(
-          `get-user?userEmail=${encodeURIComponent(user.email)}`
-        );
-        const fetchedUser = response.data;
-
-        if (fetchedUser) {
-          setUserInformations(fetchedUser);
-        } else {
-          console.error("Usuário não encontrado na resposta da API.");
-        }
-      } catch (error) {
-        console.error("Erro ao buscar usuário:", error);
-      }
-    };
-
-    fetchUser();
-  }, [user]);
 
   useEffect(() => {
     if (level) {
       const fetchSublevelContents = async () => {
+        setIsLoading(true);
         try {
           const response = await api.get(
             `getSublevelContents?sublevelId=${level}`
@@ -58,6 +40,7 @@ const SublevelContentPage: React.FC = () => {
         } catch (error) {
           console.error("Erro ao buscar conteúdo do subnível:", error);
         }
+        setIsLoading(false);
       };
 
       fetchSublevelContents();
@@ -90,9 +73,42 @@ const SublevelContentPage: React.FC = () => {
     let formattedQuestion = question;
     formattedQuestion = formattedQuestion.replace(/<q>/g, "<br />");
     formattedQuestion = formattedQuestion.replace(/<tab>/g, "&emsp;");
-    formattedQuestion = formattedQuestion.replace(/<t>/g, "<br />&emsp;-&emsp;");
+    formattedQuestion = formattedQuestion.replace(
+      /<t>/g,
+      "<br />&emsp;-&emsp;"
+    );
     return { __html: formattedQuestion };
   };
+
+  if (isLoading) {
+    return (
+      <>
+        <SidebarNavbar />
+        <Box
+          height="100vh"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Box
+            width="650px"
+            height="600px"
+            padding="10px"
+            bg="white"
+            borderRadius="10px"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Stack padding="10px" width="600px" justifyContent="center">
+              <Skeleton height="30px" width="800px" borderRadius="10px" />
+              <Skeleton height="605px" width="800px" borderRadius="10px" />
+            </Stack>
+          </Box>
+        </Box>
+      </>
+    );
+  }
 
   return (
     <>
@@ -130,18 +146,10 @@ const SublevelContentPage: React.FC = () => {
             )}
           </Container>
           <Box mt={4} className="box-bottom">
-            <Button
-              colorScheme="blue"
-              m={2}
-              onClick={handlePrevPage}
-            >
+            <Button colorScheme="blue" m={2} onClick={handlePrevPage}>
               Anterior
             </Button>
-            <Button
-              colorScheme="green"
-              m={2}
-              onClick={handleNextPage}
-            >
+            <Button colorScheme="green" m={2} onClick={handleNextPage}>
               Próximo
             </Button>
           </Box>
