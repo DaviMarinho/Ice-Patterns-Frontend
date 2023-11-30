@@ -1,5 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Box, Text, Image } from "@chakra-ui/react";
+import {
+  Box,
+  Text,
+  Image,
+  SkeletonCircle,
+  SkeletonText,
+  Skeleton,
+  Stack,
+} from "@chakra-ui/react";
 import SidebarNavbar from "../../components/SideBarNavBar";
 import api from "../../config/axios";
 import { useAuth } from "../../context/AuthContext";
@@ -13,6 +21,7 @@ import { toast } from "../../utils/toast";
 import { useParams } from "react-router-dom";
 import { InfoIcon } from "@chakra-ui/icons";
 import UserInformationContext from "../../context/UserContext";
+import { Spinner } from "@chakra-ui/react";
 
 const NivelPage: React.FC = () => {
   const navigate = useNavigate();
@@ -22,6 +31,7 @@ const NivelPage: React.FC = () => {
   );
   const [sublevels, setSublevels] = useState<any[]>([]);
   const { levelId } = useParams();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!userInformations) {
@@ -29,6 +39,7 @@ const NivelPage: React.FC = () => {
     }
 
     const fetchUser = async () => {
+      setIsLoading(true);
       try {
         if (!user || !user.email) {
           console.error("Email do usuário não disponível.");
@@ -48,30 +59,73 @@ const NivelPage: React.FC = () => {
       } catch (error) {
         console.error("Erro ao buscar usuário:", error);
       }
+      setIsLoading(false);
     };
 
     fetchUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  const fetchSublevels = async () => {
-    try {
-      const response = await api.get(`getSublevelsPerLevel?levelId=${levelId}`);
-      const fetchedSublevels = response.data.sublevels;
-
-      if (fetchedSublevels) {
-        setSublevels(fetchedSublevels);
-      } else {
-        console.error("Subníveis não encontrados na resposta da API.");
-      }
-    } catch (error) {
-      console.error("Erro ao buscar subníveis:", error);
-    }
-  };
-
   useEffect(() => {
+    const fetchSublevels = async () => {
+      setIsLoading(true);
+      try {
+        const response = await api.get(
+          `getSublevelsPerLevel?levelId=${levelId}`
+        );
+        const fetchedSublevels = response.data.sublevels;
+
+        if (fetchedSublevels) {
+          setSublevels(fetchedSublevels);
+        } else {
+          console.error("Subníveis não encontrados na resposta da API.");
+        }
+      } catch (error) {
+        console.error("Erro ao buscar subníveis:", error);
+      }
+      setIsLoading(false);
+    };
+
     fetchSublevels();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [levelId]);
+
+  if (isLoading) {
+    return (
+      <>
+        <SidebarNavbar />
+        <Box
+          height="100vh"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Box
+            width="650px"
+            height="600px"
+            padding="10px"
+            bg="white"
+            borderRadius="10px"
+            display="flex"
+              justifyContent="center"
+              alignItems="center"
+          >
+            <Stack
+              padding="10px"
+              width="600px"
+              justifyContent="center"
+              alignItems="center"
+            >
+              <Skeleton height="50px" width="650px" borderRadius="10px" />
+              <Skeleton margin="2rem" height="131px" width="650px" borderRadius="10px" />
+              <Skeleton margin="2rem" height="131px" width="650px" borderRadius="10px" />
+              <Skeleton margin="2rem" height="131px" width="650px" borderRadius="10px" />
+            </Stack>
+          </Box>
+        </Box>
+      </>
+    );
+  }
 
   return (
     <>
@@ -91,7 +145,7 @@ const NivelPage: React.FC = () => {
           </Box>
           <Box className="header-buttons">
             <InfoIcon
-              boxSize={8} // Ajuste o tamanho conforme necessário
+              boxSize={8}
               cursor="pointer"
               data-tooltip-id="my-tooltip"
               data-tooltip-content="Os conteúdos e exercícios são baseados em referências como Gamma et al (1995) e Refactoring Guru"
@@ -99,9 +153,17 @@ const NivelPage: React.FC = () => {
             <button
               className="button-header"
               data-tooltip-id="my-tooltip"
-              data-tooltip-content={`Complete o desafio para subir para o nível ${userInformations?.sublevel?.numLevel != null ? userInformations.sublevel.numLevel + 1 : "Indisponível"}`}
-              // data-tooltip-content={`Complete o desafio para subir para o próximo nível`}
-              disabled={false || (userInformations && userInformations.sublevel && userInformations.sublevel.numSublevel < 4)}
+              data-tooltip-content={`Complete o desafio para subir para o nível ${
+                userInformations?.sublevel?.numLevel != null
+                  ? userInformations.sublevel.numLevel + 1
+                  : "Indisponível"
+              }`}
+              disabled={
+                false ||
+                (userInformations &&
+                  userInformations.sublevel &&
+                  userInformations.sublevel.numSublevel < 4)
+              }
               onClick={() =>
                 userInformations?.sublevel?.numSublevel === 4 &&
                 navigate("/exercise/" + userInformations?.sublevel.id)
@@ -148,7 +210,9 @@ const NivelPage: React.FC = () => {
                               "Você precisa de energia para fazer exercícios."
                             );
                           } else {
-                            navigate("/exercise/" + sublevel.id);
+                            navigate("/exercise/" + sublevel.id, {
+                              state: { levelId: sublevel.numLevel },
+                            });
                           }
                         }}
                         src={fileIcon}

@@ -4,7 +4,6 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  margin-top: 4rem;
 }
 
 .item-quests {
@@ -19,7 +18,8 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 2rem;
+  padding: 4rem;
+  justify-content: center;
 }
 
 .text-title-quests {
@@ -36,7 +36,7 @@
   color: #000;
   font-size: 20px;
   font-style: normal;
-  font-weight: 700;
+  font-weight: 500;
   line-height: normal;
   padding-left: 1rem;
 }

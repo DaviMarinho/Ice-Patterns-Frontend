@@ -18,13 +18,14 @@
   font-style: normal;
   font-weight: 900;
   line-height: normal;
+  margin-top: 10px;
 }
 
 .info-perfil {
   color: #000;
   font-size: 24px;
   font-style: normal;
-  font-weight: 700;
+  font-weight: 500;
   line-height: normal;
   width: 500px;
 }
@@ -84,7 +85,7 @@
   color: #000;
   font-size: 20px;
   font-style: normal;
-  font-weight: 700;
+  font-weight: 500;
   line-height: normal;
   padding-left: 1rem;
 }

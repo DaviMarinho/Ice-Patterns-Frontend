@@ -1,7 +1,7 @@
 import * as React from "react";
 import "./styles.css";
 import SidebarNavbar from "../../components/SideBarNavBar";
-import { Box, Image, Text } from "@chakra-ui/react";
+import { Box, Image, Text, Spinner } from "@chakra-ui/react";
 import icebergFull from "../../assets/iceberg-full.png";
 import cadeado from "../../assets/cadeado.png";
 import { useAuth } from "../../context/AuthContext";
@@ -32,10 +32,11 @@ const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [userInformations, setUserInformations] = useState<UserInformation>();
-
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
+      setIsLoading(true);
       try {
         if (!user || !user.email) {
           console.error("Email do usuário não disponível.");
@@ -55,10 +56,27 @@ const HomePage: React.FC = () => {
       } catch (error) {
         console.error("Erro ao buscar usuário:", error);
       }
+      setIsLoading(false);
     };
 
     fetchUser();
   }, [user]);
+
+  if (isLoading) {
+    return (
+      <>
+        <SidebarNavbar />
+        <Box
+          className="container"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Spinner size="xl" />
+        </Box>
+      </>
+    );
+  }
 
   return (
     <>
@@ -75,9 +93,14 @@ const HomePage: React.FC = () => {
                 >
                   {userInformations?.sublevel?.numLevel !== undefined &&
                     userInformations.sublevel.numLevel < nivel && (
-                      <Image src={cadeado}/>
-                      )}
-                  <button className="button-nivel-pequeno" onClick={() => navigate(`/nivel/${userInformations?.sublevel.numLevel}`)}>
+                      <Image src={cadeado} />
+                    )}
+                  <button
+                    className="button-nivel-pequeno"
+                    onClick={() =>
+                      navigate(`/nivel/${userInformations?.sublevel.numLevel}`)
+                    }
+                  >
                     <Text className="textNivel">{`Nível ${nivel}`}</Text>
                     {/* {`Nível ${nivel}`} */}
                   </button>
@@ -89,7 +112,12 @@ const HomePage: React.FC = () => {
         </Box>
 
         <div className="button-container">
-          <button className="button-nivel" onClick={() => navigate(`/nivel/${userInformations?.sublevel.numLevel}`)}>
+          <button
+            className="button-nivel"
+            onClick={() =>
+              navigate(`/nivel/${userInformations?.sublevel.numLevel}`)
+            }
+          >
             Vamos lá!
           </button>
         </div>

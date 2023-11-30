@@ -1,7 +1,7 @@
 import * as React from "react";
 import "./styles.css";
 import SidebarNavbar from "../../components/SideBarNavBar";
-import { Box, Image, Text } from "@chakra-ui/react";
+import { Box, Image, Skeleton, Stack, Text } from "@chakra-ui/react";
 import perfil from "../../assets/circle-user-perfil.png";
 import icicles from "../../assets/iceberg-logo.png";
 import { useAuth } from "../../context/AuthContext";
@@ -16,9 +16,11 @@ interface Achievement {
 const PerfilPage: React.FC = () => {
   const { user } = useAuth();
   const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchAchievements = async () => {
+      setIsLoading(true);
       try {
         const response = await api.get(
           `getUserAchievements?username=${user?.username}`
@@ -31,10 +33,62 @@ const PerfilPage: React.FC = () => {
       } catch (error) {
         console.error("Erro ao buscar achievements:", error);
       }
+      setIsLoading(false);
     };
 
     fetchAchievements();
   }, [user?.username]);
+
+  if (isLoading) {
+    return (
+      <>
+        <SidebarNavbar />
+        <Box className="container-perfil">
+          <Box className="person-info">
+            <Box className="">
+              <Text className="title-perfil">Nome</Text>
+              <Skeleton height="20px" />
+              <Text className="title-perfil">Username</Text>
+              <Skeleton height="20px" />
+              <Text className="title-perfil">Email</Text>
+              <Skeleton height="20px" />
+            </Box>
+            <Image src={perfil}></Image>
+          </Box>
+
+          <Box className="achievements-perfil">
+            <div className="divisao-perfil"></div>
+
+            <Stack justifyContent="center" alignItems="flex-start">
+              <Skeleton
+                height="50px"
+                width="150px"
+                borderRadius="10px"
+              ></Skeleton>
+              <Skeleton
+                height="118px"
+                width="600px"
+                borderRadius="10px"
+                margin="0.25rem"
+              />
+              <Skeleton
+                height="118px"
+                width="600px"
+                borderRadius="10px"
+                margin="0.25rem"
+              />
+              <Skeleton
+                height="118px"
+                width="600px"
+                borderRadius="10px"
+                margin="0.25rem"
+              />
+            </Stack>
+          </Box>
+        </Box>
+      </>
+    );
+  }
 
   return (
     <>

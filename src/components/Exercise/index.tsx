@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import "./styles.css";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -50,6 +50,8 @@ const ExercisePageContent: React.FC<ExercisePageContentProps> = ({
   const [correctAnswers, setCorrectAnswers] = useState<any>(0);
 
   const [correctlyAnswered, setCorrectlyAnswered] = useState<string[]>([]);
+  const location = useLocation();
+  const numLevel = location.state?.levelId;
 
   const handleAnswer = () => {
     if (selectedAnswer !== null) {
@@ -91,7 +93,11 @@ const ExercisePageContent: React.FC<ExercisePageContentProps> = ({
   };
 
   const handlePrevPage = () => {
-    onPageChange(currentExerciseIndex - 1);
+    if (currentExerciseIndex === 0) {
+      navigate(`/nivel/${numLevel}`);
+    } else {
+      onPageChange(currentExerciseIndex - 1);
+    }
   };
 
   const formatQuestion = (question: string) => {
@@ -169,7 +175,6 @@ const ExercisePageContent: React.FC<ExercisePageContentProps> = ({
           colorScheme="blue"
           m={2}
           onClick={handlePrevPage}
-          isDisabled={currentExerciseIndex === 0}
         >
           Anterior
         </Button>

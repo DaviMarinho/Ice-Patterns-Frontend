@@ -8,7 +8,7 @@ class Toast {
       ...(title && { title }),
       description: message,
       status: 'success',
-      duration: 5000,
+      duration: 7000,
       isClosable: true,
       position: 'top',
     });
@@ -19,7 +19,7 @@ class Toast {
       ...(title && { title }),
       description: message,
       status: 'error',
-      duration: 5000,
+      duration: 7000,
       isClosable: true,
       position: 'top',
     });
@@ -30,7 +30,7 @@ class Toast {
       ...(title && { title }),
       description: message,
       status: 'warning',
-      duration: 5000,
+      duration: 7000,
       isClosable: true,
       position: 'top',
     });

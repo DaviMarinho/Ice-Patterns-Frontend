@@ -96,7 +96,7 @@ const XpModal: React.FC<XpModalProps> = ({ isOpen, onClose }) => {
             para subir de nível.
           </Text>
           <Divider my={4} />
-          <Text>Você possui {userXP?.qtXpTotal} pontos de experiência no nível {userXP?.sublevel.numLevel}.</Text>
+          <Text>Você possui {userXP?.qtXpOnLevel} pontos de experiência no nível {userXP?.sublevel.numLevel}.</Text>
         </ModalBody>
         <ModalFooter>
         </ModalFooter>

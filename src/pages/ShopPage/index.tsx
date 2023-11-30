@@ -60,7 +60,6 @@ const ShopPage: React.FC = () => {
         });
         toast.success("Energia recebida com sucesso!");
 
-        // Atualiza as informações do usuário
         setUserInformations((prev: any) => ({
           ...prev,
           qtCube: prev.qtCube - qtCubo,

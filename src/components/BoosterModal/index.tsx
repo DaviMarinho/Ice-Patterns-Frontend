@@ -28,7 +28,7 @@ interface BoosterModalProps {
 
 const BoosterModal: React.FC<BoosterModalProps> = ({ isOpen, onClose }) => {
   const { boosterState, boosterDispatch } = useContext(BoosterContext);
-  const { userInformations, setUserInformations } = useContext(UserInformationContext);
+  const { setUserInformations } = useContext(UserInformationContext);
   const { user } = useAuth();
 
   useEffect(() => {

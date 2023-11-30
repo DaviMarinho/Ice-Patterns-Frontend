@@ -18,7 +18,7 @@ import XpModal from "../ExpModal";
 import EnergiaModal from "../EnergyModal";
 import CuboGeloModal from "../IceCubeModal";
 import api from "../../config/axios";
-import UserInformationContext from '../../context/UserContext';
+import UserInformationContext from "../../context/UserContext";
 import { Tooltip } from "react-tooltip";
 
 const SidebarNavbar = () => {
@@ -31,7 +31,9 @@ const SidebarNavbar = () => {
   const [isEnergiaModalOpen, setIsEnergiaModalOpen] = useState(false);
   const [isCuboGeloModalOpen, setIsCuboGeloModalOpen] = useState(false);
 
-  const { userInformations, setUserInformations } = useContext(UserInformationContext);
+  const { userInformations, setUserInformations } = useContext(
+    UserInformationContext
+  );
   const [shouldFetchUser, setShouldFetchUser] = useState(true);
 
   useEffect(() => {
@@ -41,12 +43,12 @@ const SidebarNavbar = () => {
           console.error("Email do usuário não disponível.");
           return;
         }
-  
+
         const response = await api.get(
           `get-user?userEmail=${encodeURIComponent(user.email)}`
         );
         const fetchedUser = response.data;
-  
+
         if (fetchedUser) {
           setUserInformations(fetchedUser);
         } else {
@@ -57,13 +59,17 @@ const SidebarNavbar = () => {
       }
       setShouldFetchUser(false);
     };
-  
-      fetchUser();
+
+    fetchUser();
   }, [user, shouldFetchUser]);
-  
+
   useEffect(() => {
     setShouldFetchUser(true);
-  }, [userInformations?.qtBooster, userInformations?.qtEnergy, userInformations?.qtCube]);
+  }, [
+    userInformations?.qtBooster,
+    userInformations?.qtEnergy,
+    userInformations?.qtCube,
+  ]);
 
   return (
     <>
@@ -99,7 +105,7 @@ const SidebarNavbar = () => {
       </Box>
 
       <Box className="navbar">
-      <Tooltip id="navbar-tooltip" />
+        <Tooltip id="navbar-tooltip" />
         <Box
           className="progressBarContent"
           onClick={() => setIsXpModalOpen(true)}
@@ -124,23 +130,25 @@ const SidebarNavbar = () => {
           />
         </Box>
         <Box className="icons">
-          <HStack 
-              spacing="2"
-              className="clickable"
-              data-tooltip-id="navbar-tooltip"
-              data-tooltip-content="Impulsionadores">
-            <Image src={fireIcon} onClick={() => setIsBoosterModalOpen(true)} />
+          <HStack
+            spacing="2"
+            className="clickable"
+            data-tooltip-id="navbar-tooltip"
+            data-tooltip-content="Impulsionadores"
+            onClick={() => setIsBoosterModalOpen(true)} 
+          >
+            <Image src={fireIcon}/>
             <Text fontSize="lg">{userInformations?.qtBooster}</Text>
           </HStack>
-          <HStack 
+          <HStack
             spacing="2"
             className="clickable"
             onClick={() => setIsEnergiaModalOpen(true)}
             data-tooltip-id="navbar-tooltip"
-            data-tooltip-content="Energias">
+            data-tooltip-content="Energias"
+          >
             {[...Array(userInformations?.qtEnergy || 0)].map((_, index) => (
-              <Image 
-                key={index} src={energiaCheiaIcon} />
+              <Image key={index} src={energiaCheiaIcon} />
             ))}
             {[...Array(5 - (userInformations?.qtEnergy || 0))].map(
               (_, index) => (
@@ -148,12 +156,13 @@ const SidebarNavbar = () => {
               )
             )}
           </HStack>
-          <HStack 
-              spacing="2"
-              className="clickable"
-              onClick={() => setIsCuboGeloModalOpen(true)} 
-              data-tooltip-id="navbar-tooltip"
-              data-tooltip-content="Cubos de gelo">
+          <HStack
+            spacing="2"
+            className="clickable"
+            onClick={() => setIsCuboGeloModalOpen(true)}
+            data-tooltip-id="navbar-tooltip"
+            data-tooltip-content="Cubos de gelo"
+          >
             <Image src={cuboGeloIcon} />
             <Text fontSize="lg">{userInformations?.qtCube}</Text>
           </HStack>
