@@ -113,7 +113,7 @@ const PerfilPage: React.FC = () => {
           </Box>
 
           <Box className="achievements-container">
-            {achievements.map((achievement: Achievement, index: number) => (
+            {[...achievements].reverse().map((achievement: Achievement, index: number) => (
               <Box key={index} className="item-perfil">
                 <Image src={icicles}></Image>
                 <Box className="texts-achievements">

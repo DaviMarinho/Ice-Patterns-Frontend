@@ -52,6 +52,7 @@ const ShopPage: React.FC = () => {
           username: userInformations.username,
           qtCube: qtCubo,
           isReceiving: false,
+          isBuying: true,
         });
         await api.post("/receiveTradeItem", {
           username: userInformations.username,
@@ -73,6 +74,7 @@ const ShopPage: React.FC = () => {
           username: userInformations.username,
           qtCube: qtCubo,
           isReceiving: false,
+          isBuying: true,
         });
 
         await api.post("/receiveTradeItem", {

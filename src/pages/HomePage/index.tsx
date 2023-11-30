@@ -8,7 +8,7 @@ import { useAuth } from "../../context/AuthContext";
 import api from "../../config/axios";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-
+import { Tooltip } from "react-tooltip";
 interface Sublevel {
   id: string;
   numSublevel: number;
@@ -80,6 +80,7 @@ const HomePage: React.FC = () => {
 
   return (
     <>
+      <Tooltip id="my-tooltip" />
       <SidebarNavbar />
       <Box className="container">
         <Box className="iceberg-niveis">
@@ -89,21 +90,54 @@ const HomePage: React.FC = () => {
               <Box className="conjunto-nivel" key={nivel}>
                 <Box
                   className="textLock"
-                  onClick={() => navigate(`/nivel/${nivel}`)}
+                  onClick={() => {
+                    if (
+                      userInformations?.sublevel?.numLevel !== undefined &&
+                      userInformations.sublevel.numLevel >= nivel
+                    ) {
+                      navigate(`/nivel/${nivel}`);
+                    }
+                  }}
                 >
                   {userInformations?.sublevel?.numLevel !== undefined &&
                     userInformations.sublevel.numLevel < nivel && (
                       <Image src={cadeado} />
                     )}
-                  <button
-                    className="button-nivel-pequeno"
-                    onClick={() =>
-                      navigate(`/nivel/${userInformations?.sublevel.numLevel}`)
-                    }
-                  >
-                    <Text className="textNivel">{`Nível ${nivel}`}</Text>
-                    {/* {`Nível ${nivel}`} */}
-                  </button>
+                  {nivel === 3 ? (
+                    <button
+                      data-tooltip-id="my-tooltip"
+                      data-tooltip-content="Módulo em construção, desculpe o transtorno."
+                      className="button-nivel-pequeno"
+                      onClick={() => {
+                        if (
+                          userInformations?.sublevel?.numLevel !== undefined &&
+                          userInformations.sublevel.numLevel >= nivel
+                        ) {
+                          navigate(
+                            `/nivel/${userInformations?.sublevel.numLevel}`
+                          );
+                        }
+                      }}
+                    >
+                      <Text className="textNivel">{`Nível ${nivel}`}</Text>
+                    </button>
+                  ) : (
+                    <button
+                      className="button-nivel-pequeno"
+                      onClick={() => {
+                        if (
+                          userInformations?.sublevel?.numLevel !== undefined &&
+                          userInformations.sublevel.numLevel >= nivel
+                        ) {
+                          navigate(
+                            `/nivel/${userInformations?.sublevel.numLevel}`
+                          );
+                        }
+                      }}
+                    >
+                      <Text className="textNivel">{`Nível ${nivel}`}</Text>
+                    </button>
+                  )}
                 </Box>
                 <div className="linha"></div>
               </Box>
