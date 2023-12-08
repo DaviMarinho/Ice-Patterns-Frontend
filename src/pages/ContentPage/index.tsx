@@ -19,7 +19,7 @@ const SublevelContentPage: React.FC = () => {
   const navigate = useNavigate();
   const [sublevelContents, setSublevelContents] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0); 
+  const [totalPages, setTotalPages] = useState(0);
   const { level } = useParams();
   const location = useLocation();
   const { userInformations } = useContext(UserInformationContext);
@@ -110,6 +110,10 @@ const SublevelContentPage: React.FC = () => {
     );
   }
 
+  const isBase64Image = (data: string) => {
+    return /^data:image\/[a-zA-Z]*;base64,/.test(data);
+  };
+
   return (
     <>
       <SidebarNavbar />
@@ -136,11 +140,19 @@ const SublevelContentPage: React.FC = () => {
             {sublevelContents.length > 0 && (
               <>
                 <Box fontSize="lg" className="text-title">
-                  <div
-                    dangerouslySetInnerHTML={formatQuestion(
-                      sublevelContents[currentPage]?.text
-                    )}
-                  />
+                  {isBase64Image(sublevelContents[currentPage]?.text) ? (
+                    <img
+                      src={sublevelContents[currentPage]?.text}
+                      alt="Diagrama UML"
+                      style={{ maxWidth: "100%", maxHeight: "100%" }}
+                    />
+                  ) : (
+                    <div
+                      dangerouslySetInnerHTML={formatQuestion(
+                        sublevelContents[currentPage]?.text
+                      )}
+                    />
+                  )}
                 </Box>
               </>
             )}

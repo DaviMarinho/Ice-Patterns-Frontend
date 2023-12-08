@@ -38,27 +38,31 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose }) => {
 
   const handleRegister = async () => {
     const { username, name, email, password, confirmPassword } = formData;
-
+  
     if (password !== confirmPassword) {
-      // Trate o caso em que as senhas não coincidem
       toast.error("As senhas não coincidem");
       return;
     }
-
+  
     try {
-      const response = await api.post("create-user", {
+      await api.post("create-user", {
         username,
         name,
         email,
         password,
         confirmPassword
       });
+  
       toast.success("Registro bem-sucedido.");
+  
+      await signIn({ email, password });
+  
       onClose();
     } catch (error) {
       toast.error("Erro ao registrar o usuário.");
     }
   };
+  
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>

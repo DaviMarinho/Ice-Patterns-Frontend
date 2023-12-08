@@ -6,7 +6,7 @@ import { BoosterContext } from "./BoosterContext";
 import api from "../config/axios";
 import useSocket from '../config/service/socketService';
 
-const SocketContext = createContext<any>(useSocket);
+export const SocketContext = createContext<any>(useSocket);
 
 export const SocketProvider: React.FC<React.PropsWithChildren<{}>> = ({
   children,

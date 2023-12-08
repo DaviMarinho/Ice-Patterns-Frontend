@@ -55,7 +55,7 @@ const XpModal: React.FC<XpModalProps> = ({ isOpen, onClose }) => {
         <ModalBody>
           <Text>
             Seus pontos comprovam o quanto você já estudou! São apresentados
-            nessa barra de progresso. Ao completá-la, você pode tentar o desafio
+            nessa barra de progresso. Ao chegar em 90%, você pode tentar o desafio
             para subir de nível.
           </Text>
           <Divider my={4} />

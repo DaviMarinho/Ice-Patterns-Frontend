@@ -21,10 +21,7 @@ interface EnergiaModalProps {
   onClose: () => void;
 }
 
-const EnergiaModal: React.FC<EnergiaModalProps> = ({
-  isOpen,
-  onClose,
-}) => {
+const EnergiaModal: React.FC<EnergiaModalProps> = ({ isOpen, onClose }) => {
   const { user } = useAuth();
 
   return (
@@ -47,6 +44,7 @@ const EnergiaModal: React.FC<EnergiaModalProps> = ({
             na loja.
           </Text>
           <Divider my={4} />
+          <Text>Energias recarregam a cada 5 minutos.</Text>
         </ModalBody>
         <ModalFooter>
         </ModalFooter>

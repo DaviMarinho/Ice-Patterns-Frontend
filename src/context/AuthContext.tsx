@@ -11,6 +11,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "../utils/toast";
 import api from "../config/axios";
 import { SignedUser, SignInCredentials, AuthResponse } from "../types/auth.d";
+import useSocket from "../config/service/socketService";
+
 
 interface AuthContextData {
   signOut(): void;
@@ -29,6 +31,7 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const socket = useSocket();
   const [user, setUser] = useState<SignedUser | null>(() => {
     const loadedUser = localStorage.getItem("user");
 
@@ -105,10 +108,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [navigate]);
 
   const signOut = useCallback(() => {
-    clearAuthData();
+    
+    console.log(socket);
+
+    if (socket) {
+      socket.close();
+      socket.disconnect();
+    } else {
+      clearAuthData();
+    }
 
     navigate("/information");
-  }, [navigate, clearAuthData]);
+  }, [socket, navigate, clearAuthData]);
 
   const decodeToken = (token: string): any => {
     try {
@@ -166,8 +177,10 @@ export function useAuth(): AuthContextData {
   const context = useContext(AuthContext);
 
   useEffect(() => {
-    context.verifyExpiredToken();
-  }, [context, context.verifyExpiredToken]);
+    if (context && context.verifyExpiredToken) {
+      context.verifyExpiredToken();
+    }
+  }, [context]);
 
   return context;
 }
