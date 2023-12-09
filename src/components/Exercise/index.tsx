@@ -1,12 +1,9 @@
 // ExercisePageContent.tsx
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./styles.css";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  Box,
-  Button,
-} from "@chakra-ui/react";
+import { Box, Button } from "@chakra-ui/react";
 import ResultModal from "../ResultModal";
 
 interface Content {
@@ -48,6 +45,8 @@ const ExercisePageContent: React.FC<ExercisePageContentProps> = ({
   const navigate = useNavigate();
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState<any>(0);
+  const [exerciseImage, setExerciseImage] = useState<string>();
+  const [exerciseText, setExerciseText] = useState<string>("");
 
   const [correctlyAnswered, setCorrectlyAnswered] = useState<string[]>([]);
   const location = useLocation();
@@ -104,19 +103,42 @@ const ExercisePageContent: React.FC<ExercisePageContentProps> = ({
     let formattedQuestion = question;
     formattedQuestion = formattedQuestion.replace(/<q>/g, "<br />");
     formattedQuestion = formattedQuestion.replace(/<tab>/g, "&emsp;");
-    formattedQuestion = formattedQuestion.replace(/<t>/g, "<br />&emsp;-&emsp;");
+    formattedQuestion = formattedQuestion.replace(
+      /<t>/g,
+      "<br />&emsp;-&emsp;"
+    );
     return { __html: formattedQuestion };
   };
+
+  const extractTextAndImage = (combinedString: string) => {
+    const separatorIndex = combinedString.indexOf("data");
+    const text = combinedString.substring(0, separatorIndex);
+    const imageBase64 = combinedString.substring(separatorIndex);
+
+    setExerciseText(text);
+    setExerciseImage(imageBase64);
+  };
+
+  useEffect(() => {
+    const currentExercise = exercises[currentExerciseIndex];
+    extractTextAndImage(currentExercise.exercise.question);
+  }, [currentExerciseIndex, exercises]);
 
   return (
     <Box>
       <Box fontSize="lg" className="text-title">
-        <div
-          dangerouslySetInnerHTML={formatQuestion(
-            exercises[currentExerciseIndex]?.exercise.question
-          )}
-        />
+        <div dangerouslySetInnerHTML={formatQuestion(exerciseText || "")} />
       </Box>
+
+      {exerciseImage && (
+        <Box>
+          <img
+            src={exerciseImage}
+            alt="Exercise"
+            style={{ maxWidth: "100%", maxHeight: "100%" }}
+          />
+        </Box>
+      )}
 
       <Box className="options-content">
         {exercises[currentExerciseIndex].alternatives.map((alternative) => {
@@ -171,11 +193,7 @@ const ExercisePageContent: React.FC<ExercisePageContentProps> = ({
       </Box>
 
       <Box mt={4} className="box-bottom">
-        <Button
-          colorScheme="blue"
-          m={2}
-          onClick={handlePrevPage}
-        >
+        <Button colorScheme="blue" m={2} onClick={handlePrevPage}>
           Anterior
         </Button>
 
